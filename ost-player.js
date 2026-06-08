@@ -21,7 +21,7 @@
     return a;
   }
 
-  const SS_KEY='bdlp-ost-order', LS_KEY='bdlp-ost';
+  const SS_KEY='bdlp-ost-order', SS_ALIVE='bdlp-ost-alive', LS_KEY='bdlp-ost';
   let order;
   try { order=JSON.parse(sessionStorage.getItem(SS_KEY)); } catch{}
   if(!order||order.length!==PLAYLIST.length){
@@ -59,9 +59,15 @@
     if(seekTo){ audio.addEventListener('loadedmetadata',()=>{ audio.currentTime=seekTo; },{once:true}); }
   }
 
-  // Restaurar estado
+  // Restaurar estado — solo si es navegación interna (sessionStorage alive), no apertura nueva
+  const isInternalNav = !!sessionStorage.getItem(SS_ALIVE);
   let savedTime=0, savedVol=100;
-  try{ const s=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); if(typeof s.idx==='number') idx=s.idx; savedTime=s.time||0; if(typeof s.vol==='number') savedVol=s.vol; }catch{}
+  try{
+    const s=JSON.parse(localStorage.getItem(LS_KEY)||'{}');
+    if(isInternalNav && typeof s.idx==='number') idx=s.idx;
+    if(isInternalNav) savedTime=s.time||0;
+    if(typeof s.vol==='number') savedVol=s.vol;
+  }catch{}
 
   const volSlider=document.getElementById('ost-vol');
   audio.volume=Math.max(0,Math.min(1,(savedVol/100)*MAX_VOL));
@@ -113,5 +119,5 @@
   audio.addEventListener('timeupdate', updateBar);
   audio.addEventListener('ended',()=>{ loadTrack(idx+1,0); audio.play().catch(()=>{}); });
 
-  window.addEventListener('beforeunload', saveState);
+  window.addEventListener('beforeunload', ()=>{ saveState(); try{ sessionStorage.setItem(SS_ALIVE,'1'); }catch{} });
 })();
