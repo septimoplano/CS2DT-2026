@@ -32,7 +32,7 @@
 
   const audio=new Audio();
   audio.preload='metadata';
-  const MAX_VOL=0.15;
+  const MAX_VOL=0.10;
   let idx=0, playing=false;
 
   function fmt(s){ const m=Math.floor(s/60),sec=Math.floor(s%60); return `${m}:${String(sec).padStart(2,'0')}`; }
