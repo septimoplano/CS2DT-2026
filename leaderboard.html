@@ -250,13 +250,13 @@ function initHeaderCountdown(data){
 
 // ── LEADERBOARD CALC ──
 // KDA = (Kills + Assists) / max(Deaths, 1)
-function calcAgg(lb, dmKills) {
-  const extra = dmKills||0;
+function calcAgg(lb, dm) {
+  const dmK=(dm?.kills)||0, dmD=(dm?.deaths)||0, dmA=(dm?.assists)||0;
   const entries = lb ? Object.values(lb).filter(s=>s&&s.kills!==''&&s.kills!==undefined) : [];
-  if (!entries.length && !extra) return null;
+  if (!entries.length && !dmK) return null;
   const sum = f=>entries.reduce((a,s)=>a+(parseFloat(s[f])||0),0);
   const avg = f=>entries.length?sum(f)/entries.length:0;
-  const K=sum('kills')+extra, D=sum('deaths'), A=sum('assists');
+  const K=sum('kills')+dmK, D=sum('deaths')+dmD, A=sum('assists')+dmA;
   const kda_raw = (K+A) / Math.max(D,1);
   return {
     matches: entries.length, kills:K, deaths:D, assists:A,
@@ -275,8 +275,14 @@ function renderLeaderboard(data) {
 
   // Build ranked list
   const ranked = ALL_IDS.map(id => {
-    const dmKills = dmEnts.filter(e=>e.playerId===id&&e.kills!==null).reduce((s,e)=>s+e.kills,0);
-    const agg = calcAgg(lb[id], dmKills);
+    const pDM = dmEnts.filter(e=>e.playerId===id);
+    const hasDM = pDM.some(e=>e.kills!==null);
+    const dmStats = hasDM ? {
+      kills:   pDM.reduce((s,e)=>s+(e.kills||0),0),
+      deaths:  pDM.reduce((s,e)=>s+(e.deaths||0),0),
+      assists: pDM.reduce((s,e)=>s+(e.assists||0),0),
+    } : null;
+    const agg = calcAgg(lb[id], dmStats);
     return { id, p: PLAYERS[id], agg };
   }).sort((a,b) => {
     const ra = a.agg ? a.agg.kda_raw : -1;
