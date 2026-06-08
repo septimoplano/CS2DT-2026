@@ -924,7 +924,10 @@ function openDMPanel(dmId) {
   content.innerHTML=`
     <div class="sp-header">
       <div class="sp-title">${isElim?'DM ELIMINACIÓN':'DM INICIAL'}</div>
-      <button class="sp-close" onclick="closeSidePanel()">×</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-dark" onclick="resetDM('${dmId}')" style="font-size:10px;padding:4px 10px;letter-spacing:1px;">Restablecer</button>
+        <button class="sp-close" onclick="closeSidePanel()">×</button>
+      </div>
     </div>
     <div class="sp-body" id="sp-body"></div>`;
 
@@ -1233,6 +1236,7 @@ function dpSetTime() {
     e.date=`${dpState.year}-${pad(dpState.month+1)}-${pad(dpState.day)} ${pad(h)}:${pad(min)}`;
     const info=document.getElementById('dp-info');
     if(info){info.style.color='var(--red)';info.textContent='📅 '+fmtDate(e.date);}
+    save();
   }
 }
 function dpClear(eid) {
@@ -1241,6 +1245,7 @@ function dpClear(eid) {
   if(info){info.style.color='var(--grey)';info.textContent='Sin fecha asignada';}
   const container=document.getElementById('dp-container');
   const e2=container?findEntity(container.dataset.eid):null; if(e2) renderDPInline(e2);
+  save();
 }
 
 // ── SCOREBOARD ──
@@ -1650,6 +1655,15 @@ function resetMatch(matchId) {
     m.winner=null; m.date=null; m.finished=false;
     m.maps=Array.from({length:n},()=>mkMapData());
     saveMatch(matchId); toast('Match restablecido');
+  });
+}
+
+function resetDM(dmId) {
+  showConfirm('¿Restablecer este DM? Se perderán kills y fecha.', () => {
+    const dm=findDM(dmId); if(!dm) return;
+    dm.date=null; dm.finished=false;
+    dm.entries.forEach(e=>e.kills=null);
+    save(); openDMPanel(dmId); toast('DM restablecido');
   });
 }
 
