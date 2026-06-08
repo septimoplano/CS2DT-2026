@@ -673,8 +673,17 @@ init();
   volSlider.value=savedVol;
   loadTrack(idx, savedTime);
 
-  // Autoplay al cargar — retoma si venía sonando, o arranca de cero
-  audio.play().then(()=>{ playing=true; setBtn(true); }).catch(()=>{});
+  // Autoplay — si el browser lo bloquea, arranca en la primera interacción
+  function tryPlay(){
+    audio.play().then(()=>{ playing=true; setBtn(true); }).catch(()=>{});
+  }
+  tryPlay();
+  function onFirstInteraction(){
+    if(playing) return;
+    tryPlay();
+    ['click','keydown','scroll','touchstart'].forEach(e=>document.removeEventListener(e,onFirstInteraction));
+  }
+  ['click','keydown','scroll','touchstart'].forEach(e=>document.addEventListener(e,onFirstInteraction,{once:true}));
 
   // Controles
   document.getElementById('ost-playpause').addEventListener('click',()=>{
