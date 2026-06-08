@@ -1,0 +1,926 @@
+{
+  "dm_inicial": {
+    "id": "dm_inicial",
+    "finished": false,
+    "entries": [
+      {
+        "playerId": "76561199550607862",
+        "kills": null
+      },
+      {
+        "playerId": "76561199679639257",
+        "kills": null
+      },
+      {
+        "playerId": "76561199148697791",
+        "kills": null
+      },
+      {
+        "playerId": "76561198281472932",
+        "kills": null
+      },
+      {
+        "playerId": "76561199841015593",
+        "kills": null
+      },
+      {
+        "playerId": "76561198064411344",
+        "kills": null
+      },
+      {
+        "playerId": "76561198220829112",
+        "kills": null
+      },
+      {
+        "playerId": "76561198147808566",
+        "kills": null
+      },
+      {
+        "playerId": "76561199052181492",
+        "kills": null
+      },
+      {
+        "playerId": "76561198009515551",
+        "kills": null
+      }
+    ],
+    "date": "2026-06-05 22:00"
+  },
+  "fase1": {
+    "matches": [
+      {
+        "id": "f1-0",
+        "player_a": "76561199550607862",
+        "player_b": "76561199679639257",
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": "2026-06-06 20:00",
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "0",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": "0"
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "0",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      },
+      {
+        "id": "f1-1",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "014",
+            "deaths": "14",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "014",
+              "deaths": "14",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      },
+      {
+        "id": "f1-2",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      },
+      {
+        "id": "f1-3",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      },
+      {
+        "id": "f1-4",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "dm_elim": {
+    "id": "dm_elim",
+    "finished": false,
+    "entries": []
+  },
+  "semifinales": {
+    "matches": [
+      {
+        "id": "sf-0",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      },
+      {
+        "id": "sf-1",
+        "player_a": null,
+        "player_b": null,
+        "score_a": null,
+        "score_b": null,
+        "winner": null,
+        "date": null,
+        "finished": false,
+        "bo": 1,
+        "stats": {
+          "pa": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          },
+          "pb": {
+            "kills": "",
+            "deaths": "",
+            "assists": "",
+            "rounds_won": ""
+          }
+        },
+        "maps": [
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          },
+          {
+            "name": "",
+            "pa": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            },
+            "pb": {
+              "kills": "",
+              "deaths": "",
+              "assists": "",
+              "hs_pct": "",
+              "knife": "",
+              "rw": "",
+              "rl": ""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tercer_lugar": {
+    "id": "3rd",
+    "player_a": null,
+    "player_b": null,
+    "score_a": null,
+    "score_b": null,
+    "winner": null,
+    "date": null,
+    "finished": false,
+    "bo": 1,
+    "stats": {
+      "pa": {
+        "kills": "",
+        "deaths": "",
+        "assists": "",
+        "rounds_won": ""
+      },
+      "pb": {
+        "kills": "",
+        "deaths": "",
+        "assists": "",
+        "rounds_won": ""
+      }
+    },
+    "maps": [
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      }
+    ]
+  },
+  "gran_final": {
+    "id": "gf",
+    "player_a": null,
+    "player_b": null,
+    "score_a": null,
+    "score_b": null,
+    "winner": null,
+    "date": null,
+    "finished": false,
+    "bo": 5,
+    "stats": {
+      "pa": {
+        "kills": "",
+        "deaths": "",
+        "assists": "",
+        "rounds_won": ""
+      },
+      "pb": {
+        "kills": "",
+        "deaths": "",
+        "assists": "",
+        "rounds_won": ""
+      }
+    },
+    "maps": [
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      },
+      {
+        "name": "",
+        "pa": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        },
+        "pb": {
+          "kills": "",
+          "deaths": "",
+          "assists": "",
+          "hs_pct": "",
+          "knife": "",
+          "rw": "",
+          "rl": ""
+        }
+      }
+    ]
+  },
+  "leaderboard": {
+    "76561199550607862": {},
+    "76561199679639257": {},
+    "76561199148697791": {},
+    "76561198281472932": {},
+    "76561199841015593": {},
+    "76561198064411344": {},
+    "76561198220829112": {},
+    "76561198147808566": {},
+    "76561199052181492": {},
+    "76561198009515551": {}
+  }
+}

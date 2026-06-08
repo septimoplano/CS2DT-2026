@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEADERBOARD · Batalla de los Papagallos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&display=block" rel="stylesheet">
+<style>
+  :root {
+    --red:#e01a1a; --red-dark:#9b0f0f; --red-glow:#ff2222;
+    --black:#000; --dark:#0a0a0a; --dark2:#111; --dark3:#1a1a1a;
+    --white:#f0f0f0; --grey:#888; --grey-light:#ccc;
+    --gold:#f59e0b; --blue:#3b82f6; --green:#22c55e;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: linear-gradient(180deg, #000 0%, #060000 70%, #0d0000 100%);
+    color:var(--white); font-family:'Barlow Condensed',sans-serif;
+    overflow-x:hidden; min-height:100vh; display:flex; flex-direction:column;
+    animation:pageIn .25s ease both;
+  }
+  #particles-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+  header {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    padding:0 40px; height:64px;
+    background:rgba(0,0,0,0.88); backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(224,26,26,0.3);
+  }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:4px; color:var(--white); text-decoration:none; }
+  .logo span { color:var(--red); }
+  nav { display:flex; align-items:center; gap:8px; justify-self:end; }
+  nav a { color:var(--grey-light); text-decoration:none; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; transition:color .2s; position:relative; }
+  nav a::after { content:''; position:absolute; bottom:4px; left:16px; right:16px; height:1px; background:var(--red); transform:scaleX(0); transition:transform .2s; }
+  nav a:hover, nav a.active { color:var(--white); }
+  nav a:hover::after, nav a.active::after { transform:scaleX(1); }
+  .btn-discord { display:flex; align-items:center; gap:8px; background:#5865F2; color:#fff!important; padding:8px 18px!important; border-radius:4px; font-weight:700!important; }
+  .btn-discord::after { display:none!important; }
+  .btn-discord:hover { background:#4752C4!important; }
+  .btn-discord svg { width:16px; height:16px; }
+  .header-cd { display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .header-cd-label { font-size:9px; letter-spacing:3px; color:var(--grey); text-transform:uppercase; }
+  .header-cd-timer { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--white); display:flex; align-items:baseline; gap:4px; }
+  .header-cd-timer .hct-num { color:var(--red); min-width:1.8ch; text-align:center; }
+  .header-cd-timer .hct-sep { color:rgba(224,26,26,.4); font-size:18px; }
+
+  section { position:relative; z-index:1; padding:100px 40px 80px; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:56px; letter-spacing:6px; margin-bottom:8px; max-width:1100px; width:100%; }
+  .section-title.glitch-settled { text-shadow:1.5px 0 rgba(224,26,26,.5), -1.5px 0 rgba(0,220,255,.35); }
+  .section-title.glitching { animation:glitch-ab .11s steps(1) infinite; }
+  @keyframes glitch-ab {
+    0%   { text-shadow:2px 0 rgba(224,26,26,.75),-2px 0 rgba(0,220,255,.55); transform:none; }
+    30%  { text-shadow:-3px 1px rgba(224,26,26,.9),3px -1px rgba(0,220,255,.6); transform:skewX(-.5deg); }
+    60%  { text-shadow:1px -2px rgba(224,26,26,.65),-1px 2px rgba(0,220,255,.7); transform:skewX(.4deg) translateX(1px); }
+    80%  { text-shadow:3px 0 rgba(224,26,26,.8),-3px 0 rgba(0,220,255,.5); transform:skewX(-.2deg); }
+    100% { text-shadow:2px 0 rgba(224,26,26,.75),-2px 0 rgba(0,220,255,.55); transform:none; }
+  }
+  .glitch-cursor { color:var(--red); animation:blink-cur 1s step-start infinite; }
+  @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .section-divider { width:60px; height:2px; background:var(--red); margin-bottom:40px; max-width:1100px; width:100%; }
+  .lb-subtitle { font-size:11px; letter-spacing:4px; color:var(--grey); text-transform:uppercase; margin-bottom:40px; max-width:1100px; width:100%; }
+
+  /* PODIUM */
+  .podium { display:flex; align-items:flex-end; justify-content:center; gap:16px; margin-bottom:48px; max-width:1100px; width:100%; }
+  .podium-card { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .podium-card.p1 .podium-platform { height:80px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); }
+  .podium-card.p2 .podium-platform { height:56px; background:rgba(200,200,200,.08); border:1px solid rgba(200,200,200,.2); }
+  .podium-card.p3 .podium-platform { height:40px; background:rgba(180,100,20,.08); border:1px solid rgba(180,100,20,.2); }
+  .podium-platform { width:120px; display:flex; align-items:center; justify-content:center; border-radius:2px 2px 0 0; }
+  .podium-rank { font-family:'Bebas Neue',sans-serif; font-size:28px; }
+  .podium-card.p1 .podium-rank { color:var(--gold); }
+  .podium-card.p2 .podium-rank { color:var(--grey-light); }
+  .podium-card.p3 .podium-rank { color:#cd7f32; }
+  .podium-avatar { width:52px; height:52px; border-radius:50%; object-fit:cover; }
+  .podium-card.p1 .podium-avatar { width:64px; height:64px; border:2px solid var(--gold); }
+  .podium-card.p2 .podium-avatar { border:2px solid var(--grey-light); }
+  .podium-card.p3 .podium-avatar { border:2px solid #cd7f32; }
+  .podium-name { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; }
+  .podium-rating { font-size:10px; letter-spacing:1.5px; color:var(--grey); }
+  .podium-rating strong { color:var(--red); font-family:'Bebas Neue',sans-serif; font-size:14px; }
+
+  /* TABLE */
+  .lb-table-wrap { width:100%; max-width:1100px; overflow-x:auto; margin-bottom:48px; }
+  .lb-table { width:100%; border-collapse:collapse; min-width:760px; }
+  .lb-table thead th {
+    font-size:11px; letter-spacing:2px; color:var(--grey); text-transform:uppercase;
+    padding:12px 20px; border-bottom:1px solid rgba(224,26,26,.2);
+    text-align:center; white-space:nowrap;
+  }
+  .lb-table thead th:nth-child(2) { text-align:left; }
+  .lb-table thead th.sort-active { color:var(--red); }
+  .lb-table tbody tr {
+    border-bottom:1px solid rgba(255,255,255,.04);
+    transition:background .15s;
+  }
+  .lb-table tbody tr:hover { background:rgba(255,255,255,.03); }
+  .lb-table tbody tr.top1 { background:rgba(245,158,11,.05); border-left:2px solid var(--gold); }
+  .lb-table tbody tr.top2 { border-left:2px solid rgba(200,200,200,.4); }
+  .lb-table tbody tr.top3 { border-left:2px solid rgba(180,100,20,.5); }
+  .lb-table td { padding:12px 20px; text-align:center; font-size:13px; vertical-align:middle; }
+  .lb-table td:nth-child(2) { text-align:left; }
+  .td-rank { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--grey); width:36px; }
+  .td-rank.g { color:var(--gold); }
+  .td-rank.s { color:var(--grey-light); }
+  .td-rank.b { color:#cd7f32; }
+  .td-player { display:flex; align-items:center; gap:10px; }
+  .td-player img { width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,.12); }
+  .td-player-name { font-size:14px; font-weight:700; }
+  .td-pj { color:var(--grey); font-size:12px; }
+  .td-rating { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--red); }
+  .td-kd { font-weight:700; }
+  .td-kd.pos { color:var(--green); }
+  .td-kd.neg { color:var(--red); }
+  .td-hs { color:var(--gold); }
+  .td-adr { }
+  .td-none { color:rgba(255,255,255,.2); font-size:11px; }
+
+  .empty-state { padding:60px; text-align:center; color:var(--grey); font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px dashed rgba(255,255,255,.08); max-width:1100px; width:100%; }
+
+  footer { position:relative; z-index:1; text-align:center; padding:32px; border-top:1px solid rgba(255,255,255,.05); font-size:11px; letter-spacing:2px; color:var(--grey); text-transform:uppercase; }
+  footer span { color:var(--red); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background:var(--black); }
+  ::-webkit-scrollbar-thumb { background:var(--red-dark); border-radius:2px; }
+  @keyframes pageIn { from{opacity:0} to{opacity:1} }
+
+  @media(max-width:768px) {
+    header { padding:0 20px; }
+    section { padding:100px 20px 60px; }
+    nav a:not(.btn-discord) { display:none; }
+    .podium { gap:8px; }
+    .podium-platform { width:90px; }
+  }
+  /* ANIMATED BG ORBS */
+  .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .orb { position:absolute; border-radius:50%; filter:blur(88px); width:40vw; height:40vh; background:rgba(182,8,8,.3); }
+  @keyframes d1 { 0%{transform:translate(0,0)}   100%{transform:translate(65px,-100px)} }
+  @keyframes d2 { 0%{transform:translate(0,0)}   100%{transform:translate(-75px,-85px)} }
+  @keyframes d3 { 0%{transform:translate(0,0)}   100%{transform:translate(85px,65px)}   }
+  @keyframes d4 { 0%{transform:translate(0,0)}   100%{transform:translate(-55px,75px)}  }
+  @keyframes d5 { 0%{transform:translate(0,0)}   100%{transform:translate(45px,-115px)} }  .o1{left:-5%;  top:-4%; animation:d1 20s ease-in-out infinite alternate;}
+  .o2{left:68%;  top:-3%; animation:d2 25s ease-in-out infinite alternate;}
+  .o3{left:-8%;  top:38%; animation:d5 18s ease-in-out infinite alternate;}
+  .o4{left:70%;  top:44%; animation:d3 22s ease-in-out infinite alternate;}
+  .o5{left:4%;   top:70%; animation:d4 28s ease-in-out infinite alternate;}
+  .o6{left:56%;  top:66%; animation:d1 21s ease-in-out infinite alternate; width:35vw; height:35vh;}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div><div class="orb o5"></div><div class="orb o6"></div></div>
+<canvas id="particles-canvas"></canvas>
+
+<header>
+  <a href="index.html" class="logo">LA BATALLA DE LOS <span>PAPAGALLOS</span></a>
+  <div class="header-cd">
+    <div class="header-cd-label" id="hcd-label">PRÓXIMO COMBATE</div>
+    <div class="header-cd-timer">
+      <span class="hct-num" id="hcd-d">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-h">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-m">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-s">--</span>
+    </div>
+  </div>
+  <nav>
+    <a href="bracket.html">Bracket</a>
+    <a href="fechas.html">Fechas</a>
+    <a href="leaderboard.html" class="active">Leaderboard</a>
+    <a href="https://discord.gg/aH4NMNwQve" target="_blank" class="btn-discord">
+      <svg viewBox="0 0 71 55" fill="currentColor"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.6.6a.2.2 0 0 0-.2.1c-.6 1.1-1.3 2.6-1.8 3.7a54 54 0 0 0-16.3 0 38 38 0 0 0-1.8-3.7.2.2 0 0 0-.2-.1A58.3 58.3 0 0 0 10.9 4.9a.2.2 0 0 0-.1.1C1.6 18.1-.9 31 .3 43.6c0 .1 0 .2.1.2A58.8 58.8 0 0 0 18 52c.1 0 .2 0 .2-.1 1.4-1.9 2.6-3.9 3.7-5.9.1-.1 0-.2-.1-.3a38.7 38.7 0 0 1-5.5-2.7.2.2 0 0 1 0-.3l1.1-.9a.2.2 0 0 1 .2 0c11.5 5.3 24 5.3 35.4 0a.2.2 0 0 1 .2 0l1.1.9c.1.1.1.2 0 .3a36.2 36.2 0 0 1-5.6 2.7c-.1 0-.1.2 0 .3 1.1 2 2.3 4 3.6 5.9.1.1.2.1.3.1A58.6 58.6 0 0 0 70.6 43.8c.1-.1.1-.2.1-.2C72 29.2 68.2 16.4 60.2 5a.2.2 0 0 0-.1-.1zM23.7 36.3c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2zm23.7 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2z"/></svg>
+      Discord
+    </a>
+  </nav>
+</header>
+
+<section>
+  <h2 class="section-title" id="page-title">LEADERBOARD</h2>
+  <div class="section-divider"></div>
+  <p class="lb-subtitle">Temporada 1 · Estadísticas individuales</p>
+  <div id="lb-content"><div class="empty-state">Sin estadísticas registradas aún</div></div>
+</section>
+
+<footer><p>BATALLA DE LOS <span>PAPAGALLOS</span> · CS2 · <span id="fy"></span></p></footer>
+
+<script>
+const PLAYERS = {
+  "76561199550607862":{"name":"FULLRECORDS","avatar":"https://avatars.steamstatic.com/970695a0720b604e3448204cb2811091bdab699e_medium.jpg"},
+  "76561199679639257":{"name":"Dom","avatar":"https://avatars.steamstatic.com/0abb44703585b0e6c43ad53886e04fd294208daf_medium.jpg"},
+  "76561199148697791":{"name":"Matador Salas","avatar":"https://avatars.steamstatic.com/43b5674a82decb2ebb32c860a99f4d505ae3ce57_medium.jpg"},
+  "76561198281472932":{"name":"Baltica14","avatar":"https://avatars.steamstatic.com/3ae572cafefbf47023c385a1213466e8e83c7072_medium.jpg"},
+  "76561199841015593":{"name":"Pablito Marmol","avatar":"https://avatars.steamstatic.com/3416524307f21b0f0b0666e87d7b730beba5ed60_medium.jpg"},
+  "76561198064411344":{"name":"Wayoman","avatar":"https://avatars.steamstatic.com/f67afcb84d6c01125d4cbe35a3491d201ecf4a9c_medium.jpg"},
+  "76561198220829112":{"name":"ZachXBT","avatar":"https://avatars.steamstatic.com/715f0fbeb04d9217e47c9445e9734a729a7c9070_medium.jpg"},
+  "76561198147808566":{"name":"Toallín","avatar":"https://avatars.steamstatic.com/2c0b15cbdceefc2070500651d03ff68d47a56ce0_medium.jpg"},
+  "76561199052181492":{"name":"mateo186GB","avatar":"https://avatars.steamstatic.com/025d05d0c15afceb85db5965c763bdd7ca862611_medium.jpg"},
+  "76561198009515551":{"name":"Gusano0","avatar":"https://avatars.steamstatic.com/3a6df1fe8908553e55a9080c0d9bd986873d49bc_medium.jpg"}
+};
+const ALL_IDS = Object.keys(PLAYERS);
+function pl(id){ return id && PLAYERS[id] ? PLAYERS[id] : null; }
+
+async function loadData(){
+  try{ const r=await fetch('/api/state'); if(!r.ok) throw 0; return await r.json(); }
+  catch{
+    try{ const s=localStorage.getItem('papagallos-v3'); if(s) return JSON.parse(s); } catch{}
+    return null;
+  }
+}
+
+function startCountdown(target){
+  function tick(){
+    const diff=new Date(target)-new Date(); const zero=diff<=0;
+    const d=zero?0:Math.floor(diff/86400000), h=zero?0:Math.floor((diff%86400000)/3600000),
+          m=zero?0:Math.floor((diff%3600000)/60000), s=zero?0:Math.floor((diff%60000)/1000);
+    const fmt=n=>String(n).padStart(2,'0');
+    document.getElementById('hcd-d').textContent=fmt(d); document.getElementById('hcd-h').textContent=fmt(h);
+    document.getElementById('hcd-m').textContent=fmt(m); document.getElementById('hcd-s').textContent=fmt(s);
+  }
+  tick(); setInterval(tick,1000);
+}
+
+function initHeaderCountdown(data){
+  const all=[]; const now=new Date();
+  function collect(m,r){ (m||[]).forEach(x=>{if(x&&x.date) all.push({...x,round:r});}); }
+  collect(data.fase1?.matches,'Fase 1'); collect(data.semifinales?.matches,'Semifinal');
+  if(data.tercer_lugar?.date) all.push({...data.tercer_lugar,round:'3er Lugar'});
+  if(data.gran_final?.date)   all.push({...data.gran_final,round:'Gran Final'});
+  if(data.dm_inicial?.date)   all.push({...data.dm_inicial, round:'DM Inicial',isDM:true});
+  if(data.dm_elim?.date)      all.push({...data.dm_elim,    round:'DM Eliminación',isDM:true});
+  all.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const next=all.find(x=>new Date(x.date)>now&&!x.finished);
+  if(!next) return;
+  startCountdown(next.date);
+  if(next.isDM){
+    document.getElementById('hcd-label').textContent=next.round.toUpperCase();
+  } else {
+    const pa=pl(next.player_a), pb=pl(next.player_b);
+    document.getElementById('hcd-label').textContent=`${pa?pa.name:'TBD'} vs ${pb?pb.name:'TBD'}`;
+  }
+}
+
+// ── LEADERBOARD CALC ──
+// KDA = (Kills + Assists) / max(Deaths, 1)
+function calcAgg(lb, dmKills) {
+  const extra = dmKills||0;
+  const entries = lb ? Object.values(lb).filter(s=>s&&s.kills!==''&&s.kills!==undefined) : [];
+  if (!entries.length && !extra) return null;
+  const sum = f=>entries.reduce((a,s)=>a+(parseFloat(s[f])||0),0);
+  const avg = f=>entries.length?sum(f)/entries.length:0;
+  const K=sum('kills')+extra, D=sum('deaths'), A=sum('assists');
+  const kda_raw = (K+A) / Math.max(D,1);
+  return {
+    matches: entries.length, kills:K, deaths:D, assists:A,
+    kda: kda_raw.toFixed(2), kda_raw,
+    hs_pct: entries.length ? avg('hs_pct').toFixed(1) : null,
+    rw: sum('rw'), rl: sum('rl'), knife: sum('knife')
+  };
+}
+
+function dash(v) { return (v===''||v===undefined||v===null) ? '<span class="td-none">—</span>' : v; }
+
+// ── RENDER ──
+function renderLeaderboard(data) {
+  const lb = data.leaderboard || {};
+  const dmEnts = [...(data.dm_inicial?.entries||[]), ...(data.dm_elim?.entries||[])];
+
+  // Build ranked list
+  const ranked = ALL_IDS.map(id => {
+    const dmKills = dmEnts.filter(e=>e.playerId===id&&e.kills!==null).reduce((s,e)=>s+e.kills,0);
+    const agg = calcAgg(lb[id], dmKills);
+    return { id, p: PLAYERS[id], agg };
+  }).sort((a,b) => {
+    const ra = a.agg ? a.agg.kda_raw : -1;
+    const rb = b.agg ? b.agg.kda_raw : -1;
+    return rb - ra;
+  });
+  const hasRealData = ranked.some(r => r.agg !== null);
+
+  const content = document.getElementById('lb-content');
+
+  // TABLE — all 10 players always shown
+  const wrap = document.createElement('div'); wrap.className = 'lb-table-wrap';
+  const table = document.createElement('table'); table.className = 'lb-table';
+  table.innerHTML = `<thead><tr>
+    <th>#</th>
+    <th>Jugador</th>
+    <th>K</th>
+    <th>D</th>
+    <th>A</th>
+    <th class="sort-active">KDA</th>
+    <th>HS%</th>
+    <th>RW</th>
+    <th>RL</th>
+    <th>Cuchillo</th>
+  </tr></thead>`;
+
+  const tbody = document.createElement('tbody');
+  ranked.forEach((r, i) => {
+    const rank = i + 1;
+    const a = r.agg;
+    const kdaClass = a && parseFloat(a.kda)>=1 ? 'pos' : a ? 'neg' : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${hasRealData ? `<span class="td-rank">#${rank}</span>` : '<span class="td-none">—</span>'}</td>
+      <td><div class="td-player"><img src="${r.p.avatar}" onerror="this.style.background='#333'"><span class="td-player-name">${r.p.name}</span></div></td>
+      <td>${dash(a?.kills)}</td>
+      <td>${dash(a?.deaths)}</td>
+      <td>${dash(a?.assists)}</td>
+      <td><span class="td-kd ${kdaClass}">${a ? a.kda : dash()}</span></td>
+      <td><span class="td-hs">${a && a.hs_pct!==null ? a.hs_pct+'%' : dash()}</span></td>
+      <td>${dash(a?.rw)}</td>
+      <td>${dash(a?.rl)}</td>
+      <td>${dash(a?.knife)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Easter egg — always last
+  const eeRow = document.createElement('tr');
+  eeRow.style.cssText = 'opacity:.55;border-top:1px solid rgba(255,255,255,.08);';
+  eeRow.innerHTML = `
+    <td>${hasRealData ? `<span class="td-rank">#${ranked.length+1}</span>` : '<span class="td-none">—</span>'}</td>
+    <td><div class="td-player">
+      <div style="display:flex;align-items:center;flex-shrink:0;gap:1px;">
+        <span style="display:inline-block;transform:scaleX(-1);font-size:20px;line-height:1;margin-right:-11px;z-index:0;">🪽</span>
+        <div style="position:relative;flex-shrink:0;">
+          <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:28px;height:11px;background:transparent;border:2.5px solid #f59e0b;border-radius:50%;box-shadow:0 0 8px rgba(245,158,11,.8);pointer-events:none;z-index:2;"></div>
+          <img src="https://avatars.steamstatic.com/2db1fbb4473fca97d1126a4d2d1661b1a0c1f8ce_medium.jpg" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid rgba(245,158,11,.5);display:block;position:relative;z-index:1;" onerror="this.style.background='#333'">
+        </div>
+        <span style="font-size:20px;line-height:1;margin-left:-11px;z-index:0;">🪽</span>
+      </div>
+      <span class="td-player-name" style="color:var(--grey);">Señor Kokoshka</span>
+      <span style="font-size:11px;color:var(--grey);letter-spacing:.3px;font-style:italic;margin-left:4px;">Cuentero llevate la PC 🥴</span>
+    </div></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>
+    <td><span class="td-none">—</span></td>`;
+  tbody.appendChild(eeRow);
+
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  content.innerHTML = '';
+  content.appendChild(wrap);
+}
+
+// ── GLITCH TITLE ──
+function glitchReveal(el, finalText) {
+  const gc = '!<>-_\\/[]{}=+*^?#@$%▓░█▌▐0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lockAt = Array.from({length:finalText.length}, (_,i) => Math.floor(i*7)+3+Math.floor(Math.random()*5));
+  let frame = 0; const maxFrame = Math.max(...lockAt)+3;
+  el.classList.add('glitching');
+  const id = setInterval(()=>{
+    el.textContent = finalText.split('').map((c,i)=>{
+      if(c===' ') return ' ';
+      if(frame>=lockAt[i]) return c;
+      return gc[Math.floor(Math.random()*gc.length)];
+    }).join('');
+    frame++;
+    if(frame>=maxFrame){
+      clearInterval(id);
+      el.textContent=finalText;
+      el.classList.remove('glitching');
+      el.classList.add('glitch-settled');
+      const cur=document.createElement('span'); cur.className='glitch-cursor'; cur.textContent='_';
+      el.appendChild(cur);
+    }
+  }, 38);
+}
+
+// ── PARTICLES + EMBERS + LIGHTNING ──
+function initParticles(){
+  const canvas=document.getElementById('particles-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,pts; const embers=[],bolts=[];
+  const EMBER_COLORS=['rgba(224,26,26,','rgba(255,70,10,','rgba(245,120,0,','rgba(255,160,20,'];
+  let frame=0,nextBolt=120;
+  function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+  function make(){ pts=Array.from({length:80},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.3,a:Math.random()*.5+.1,red:Math.random()<.25})); }
+  function spawnEmber(){ const col=EMBER_COLORS[Math.floor(Math.random()*EMBER_COLORS.length)]; embers.push({x:Math.random()*W,y:H+4,vx:(Math.random()-.5)*.8,vy:-(Math.random()*2.2+.6),r:Math.random()*1.8+.4,life:1,decay:Math.random()*.005+.003,col,flicker:Math.random()*Math.PI*2}); }
+  function jag(x1,y1,x2,y2,rough,depth){ if(depth===0) return [{x:x1,y:y1},{x:x2,y:y2}]; const mx=(x1+x2)/2+(Math.random()-.5)*rough,my=(y1+y2)/2+(Math.random()-.5)*rough*.15; return [...jag(x1,y1,mx,my,rough/2,depth-1).slice(0,-1),...jag(mx,my,x2,y2,rough/2,depth-1)]; }
+  function spawnBolt(){ const x=Math.random()*W,depth=H*(0.45+Math.random()*.5),pts2=jag(x,-10,x+(Math.random()-.5)*180,depth,160,8),branches=[]; for(let i=4;i<pts2.length-4;i+=Math.floor(Math.random()*6+3)){ if(Math.random()<.4){ const bLen=25+Math.random()*90,ang=(Math.random()-.5)*1.4,brPts=jag(pts2[i].x,pts2[i].y,pts2[i].x+Math.sin(ang)*bLen,pts2[i].y+Math.cos(ang)*bLen,50,5); branches.push({pts:brPts,start:i/pts2.length}); } } bolts.push({pts:pts2,branches,progress:0,speed:0.07+Math.random()*.05,phase:'travel',life:1,decay:Math.random()*.07+.055}); }
+  function drawBolt(points,alpha,lw){ if(!points||points.length<2) return; ctx.beginPath(); ctx.moveTo(points[0].x,points[0].y); for(const p of points) ctx.lineTo(p.x,p.y); ctx.strokeStyle=`rgba(200,0,0,${alpha*.22})`; ctx.lineWidth=lw*5; ctx.stroke(); ctx.strokeStyle=`rgba(230,30,30,${alpha*.5})`; ctx.lineWidth=lw*2; ctx.stroke(); ctx.strokeStyle=`rgba(255,160,160,${alpha*.95})`; ctx.lineWidth=lw*.6; ctx.stroke(); }
+  function draw(){
+    ctx.clearRect(0,0,W,H); frame++;
+    pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.red?`rgba(224,26,26,${p.a})`:`rgba(200,200,200,${p.a*.4})`; ctx.fill(); });
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,dist=Math.sqrt(dx*dx+dy*dy); if(dist<120){ const a=(1-dist/120)*.15; ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle=(pts[i].red||pts[j].red)?`rgba(224,26,26,${a})`:`rgba(255,255,255,${a*.4})`; ctx.lineWidth=.5; ctx.stroke(); } }
+    if(Math.random()<.45) spawnEmber();
+    for(let i=embers.length-1;i>=0;i--){ const e=embers[i]; e.flicker+=.09; e.x+=e.vx+Math.sin(e.flicker)*.18; e.y+=e.vy; e.vy*=.997; e.life-=e.decay; if(e.life<=0){embers.splice(i,1);continue;} const pulse=.7+Math.abs(Math.sin(e.flicker))*.3; ctx.beginPath(); ctx.arc(e.x,e.y,e.r*pulse,0,Math.PI*2); ctx.fillStyle=e.col+e.life+')'; ctx.fill(); const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.r*5); g.addColorStop(0,e.col+(e.life*.45)+')'); g.addColorStop(1,e.col+'0)'); ctx.beginPath(); ctx.arc(e.x,e.y,e.r*5,0,Math.PI*2); ctx.fillStyle=g; ctx.fill(); }
+    if(frame>=nextBolt){ spawnBolt(); if(Math.random()<.35) setTimeout(spawnBolt,80+Math.random()*120); if(Math.random()<.15) setTimeout(spawnBolt,220+Math.random()*180); nextBolt=frame+Math.floor(Math.random()*480+360); }
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    for(let i=bolts.length-1;i>=0;i--){ const b=bolts[i]; if(b.phase==='travel'){ b.progress+=b.speed; if(b.progress>=1){b.progress=1;b.phase='fade';} const end=Math.max(2,Math.floor(b.pts.length*b.progress)); drawBolt(b.pts.slice(0,end),1,2); for(const br of b.branches){ if(b.progress>br.start){ const brProg=Math.min(1,(b.progress-br.start)/(1-br.start)); drawBolt(br.pts.slice(0,Math.max(2,Math.floor(br.pts.length*brProg))),.7,.9); } } } else { b.life-=b.decay; if(b.life<=0){bolts.splice(i,1);continue;} if(b.life>0.88){ctx.fillStyle=`rgba(180,0,0,${(b.life-.88)*0.07})`;ctx.fillRect(0,0,W,H);} drawBolt(b.pts,b.life,2); for(const br of b.branches) drawBolt(br.pts,b.life*.6,.9); } }
+    ctx.lineCap='butt'; ctx.lineJoin='miter';
+    requestAnimationFrame(draw);
+  }
+  resize(); make(); draw();
+  window.addEventListener('resize',()=>{resize();make();});
+}
+
+document.getElementById('fy').textContent=new Date().getFullYear();
+async function init(){
+  initParticles();
+  glitchReveal(document.getElementById('page-title'), 'LEADERBOARD');
+  const data = await loadData();
+  if (data) {
+    initHeaderCountdown(data);
+    renderLeaderboard(data);
+  }
+}
+init();
+</script>
+</body>
+</html>

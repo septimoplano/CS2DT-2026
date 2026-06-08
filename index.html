@@ -1,0 +1,534 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BATALLA DE LOS PAPAGALLOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;600&display=block" rel="stylesheet">
+<style>
+  :root {
+    --red:#e01a1a; --red-dark:#9b0f0f; --red-glow:#ff2222;
+    --black:#000; --dark:#0a0a0a; --dark2:#111; --dark3:#1a1a1a;
+    --white:#f0f0f0; --grey:#888; --grey-light:#ccc;
+    --blue:#3b82f6; --gold:#f59e0b; --yellow:#eab308; --purple:#a78bfa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: linear-gradient(180deg, #000 0%, #060000 70%, #0d0000 100%);
+    color:var(--white); font-family:'Barlow Condensed',sans-serif; overflow-x:hidden;
+  }
+
+  #particles-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+  header {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    padding:0 40px; height:64px;
+    background:rgba(0,0,0,0.88); backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(224,26,26,0.3);
+  }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:4px; color:var(--white); text-decoration:none; }
+  .logo span { color:var(--red); }
+  nav { display:flex; align-items:center; gap:8px; justify-self:end; }
+  .header-cd { display:flex; flex-direction:column; align-items:center; gap:1px; }
+  .header-cd-label { font-size:9px; letter-spacing:3px; color:var(--grey); text-transform:uppercase; }
+  .header-cd-timer { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--white); display:flex; align-items:baseline; gap:4px; }
+  .header-cd-timer .hct-num { color:var(--red); min-width:1.8ch; text-align:center; }
+  .header-cd-timer .hct-sep { color:rgba(224,26,26,.4); font-size:18px; }
+  nav a { color:var(--grey-light); text-decoration:none; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; transition:color .2s; position:relative; }
+  nav a::after { content:''; position:absolute; bottom:4px; left:16px; right:16px; height:1px; background:var(--red); transform:scaleX(0); transition:transform .2s; }
+  nav a:hover { color:var(--white); }
+  nav a:hover::after { transform:scaleX(1); }
+  .btn-discord { display:flex; align-items:center; gap:8px; background:#5865F2; color:#fff!important; padding:8px 18px!important; border-radius:4px; font-weight:700!important; }
+  .btn-discord::after { display:none!important; }
+  .btn-discord:hover { background:#4752C4!important; }
+  .btn-discord svg { width:16px; height:16px; }
+
+  section { position:relative; z-index:1; min-height:100vh; padding:100px 40px 60px; }
+
+  /* HOME */
+  #home { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; padding:60px 40px 40px; gap:7px; }
+  #home::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(224,26,26,.012) 2px,rgba(224,26,26,.012) 4px); pointer-events:none; }
+  #home > * { position:relative; z-index:1; }
+  .hero-logo-wrap { animation:fadeInUp .8s ease both; filter:drop-shadow(0 0 14px rgba(224,26,26,.4)) drop-shadow(0 0 40px rgba(200,10,10,.2)); }
+  .hero-logo { width:220px; height:auto; object-fit:contain; display:block; margin:12px 0; }
+  .home-title { font-family:'Bebas Neue',sans-serif; text-align:center; animation:fadeInUp .8s .1s ease both; margin-top:-12px; }
+  .home-title .line2 { color:var(--red); display:block; font-size:clamp(17px,2.5vw,32px); letter-spacing:8px; text-shadow:0 0 40px rgba(224,26,26,.5); }
+  .home-title .line3 { color:var(--grey); display:block; font-size:clamp(12px,1.4vw,15px); letter-spacing:6px; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-weight:600; }
+  .home-subtitle { display:none; }
+
+  .combat-banner-wrap { width:min(800px,100%); animation:fadeInUp .8s .25s ease both; margin-top:14px; }
+  .combat-banner { position:relative; width:100%; height:0; padding-bottom:45%; overflow:hidden; background:var(--dark2); border:1px solid rgba(224,26,26,.25); border-radius:2px; }
+  .combat-placeholder { display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--grey); }
+  .combat-placeholder svg { width:36px; height:36px; opacity:.3; }
+  .combat-placeholder p { font-size:12px; letter-spacing:3px; text-transform:uppercase; }
+  .combat-vs-overlay { position:absolute; inset:0; display:none; align-items:center; justify-content:space-between; padding:18px 32px; background:linear-gradient(to right,rgba(0,0,0,.7) 0%,transparent 40%,transparent 60%,rgba(0,0,0,.7) 100%); z-index:2; }
+  .combat-vs-overlay.active { display:flex; }
+  .combat-player { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .combat-player img { width:64px; height:64px; border-radius:50%; border:2px solid var(--red); object-fit:cover; }
+  .combat-player-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; }
+  .vs-badge { font-family:'Bebas Neue',sans-serif; font-size:60px; color:var(--red); text-shadow:0 0 30px rgba(224,26,26,.8); line-height:1; }
+
+  .countdown-block { display:flex; align-items:center; animation:fadeInUp .8s .35s ease both; margin-top:16px; }
+  .cd-unit { display:flex; flex-direction:column; align-items:center; padding:0 22px; position:relative; }
+  .cd-unit:not(:last-child)::after { content:':'; position:absolute; right:-4px; top:50%; transform:translateY(-60%); font-family:'Bebas Neue',sans-serif; font-size:60px; color:var(--red); line-height:1; }
+  .cd-number { font-family:'Bebas Neue',sans-serif; font-size:clamp(64px,8.5vw,104px); line-height:1; color:var(--white); min-width:2ch; text-align:center; text-shadow:0 0 40px rgba(224,26,26,.4); }
+  .cd-number.glitching { animation:cd-glitch .11s steps(1) infinite; }
+  .cd-number.glitch-settled { text-shadow:2px 0 rgba(224,26,26,.55),-2px 0 rgba(0,220,255,.4),0 0 40px rgba(224,26,26,.4); }
+  @keyframes cd-glitch {
+    0%   { text-shadow:3px 0 rgba(224,26,26,.85),-3px 0 rgba(0,220,255,.65),0 0 40px rgba(224,26,26,.4); transform:none; }
+    30%  { text-shadow:-4px 1px rgba(224,26,26,.95),4px -1px rgba(0,220,255,.7); transform:skewX(-.8deg) translateX(2px); }
+    60%  { text-shadow:2px -2px rgba(224,26,26,.75),-2px 2px rgba(0,220,255,.8); transform:skewX(.6deg); }
+    80%  { text-shadow:4px 0 rgba(224,26,26,.9),-4px 0 rgba(0,220,255,.6); transform:skewX(-.3deg) translateX(-1px); }
+    100% { text-shadow:3px 0 rgba(224,26,26,.85),-3px 0 rgba(0,220,255,.65); transform:none; }
+  }
+  .cd-label  { font-size:10px; letter-spacing:3px; color:var(--grey); text-transform:uppercase; margin-top:3px; }
+
+
+  /* SCROLL ARROW */
+  .cd-label-row { display:flex; align-items:center; gap:10px; margin-top:23px; }
+  .countdown-match-label { font-size:12px; letter-spacing:3px; color:var(--grey); text-transform:uppercase; margin-top:0; }
+  .scroll-arrow { display:flex; color:var(--white); text-decoration:none; animation:arrow-bounce 2.4s ease-in-out infinite; }
+  .scroll-arrow:hover { opacity:1; }
+  .scroll-arrow svg { width:20px; height:20px; }
+  @keyframes arrow-bounce {
+    0%,100% { transform:translateY(-3px); opacity:.2; }
+    50%     { transform:translateY(3px); opacity:1; }
+  }
+
+  /* SOBRE SECTION */
+  #sobre { padding:100px 40px 100px; display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; }
+  .sobre-block { max-width:680px; width:100%; margin-bottom:88px; }
+  .sobre-block:last-child { margin-bottom:0; }
+  .sobre-title { font-family:'Bebas Neue',sans-serif; font-size:46px; letter-spacing:4px; color:var(--white); margin-bottom:6px; }
+  .sobre-sub { font-size:13px; font-weight:700; letter-spacing:3px; color:var(--grey-light); margin-bottom:18px; text-transform:uppercase; }
+  .sobre-divider { width:36px; height:2px; background:var(--red); margin-bottom:26px; }
+  .sobre-text { font-size:16px; color:rgba(240,240,240,.72); line-height:1.85; font-style:italic; font-weight:300; margin-bottom:14px; }
+  .sobre-text:last-child { margin-bottom:0; }
+  .fases-list { margin-top:20px; display:flex; flex-direction:column; gap:16px; }
+  .fase-item { padding-left:18px; border-left:2px solid rgba(224,26,26,.35); }
+  .fase-label { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; color:var(--red); margin-bottom:5px; }
+  .fase-text { font-size:15px; color:rgba(240,240,240,.65); line-height:1.75; font-style:italic; font-weight:300; }
+
+  /* BRACKET */
+  #bracket { padding-top:100px; min-height:auto; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:56px; letter-spacing:6px; margin-bottom:8px; }
+  .section-title span { color:var(--red); }
+  .section-divider { width:60px; height:2px; background:var(--red); margin-bottom:48px; }
+
+  .empty-state { padding:60px; text-align:center; color:var(--grey); font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px dashed rgba(255,255,255,.08); }
+
+  footer { position:relative; z-index:1; text-align:center; padding:32px; border-top:1px solid rgba(255,255,255,.05); font-size:11px; letter-spacing:2px; color:var(--grey); text-transform:uppercase; }
+  footer span { color:var(--red); }
+
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background:var(--black); }
+  ::-webkit-scrollbar-thumb { background:var(--red-dark); border-radius:2px; }
+
+  @media(max-width:768px) {
+    header { padding:0 20px; }
+    section { padding:100px 20px 60px; }
+    #home { padding:80px 16px 32px; }
+    nav a:not(.btn-discord) { display:none; }
+    .calendar-match-item { grid-template-columns:110px 1fr; }
+    .final-row { grid-template-columns:1fr; }
+    .matches-row { gap:8px; }
+    .b-match { width:100%; max-width:280px; }
+  }
+  /* ANIMATED BG ORBS */
+  .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .orb { position:absolute; border-radius:50%; filter:blur(110px); }
+  .orb-b { width:76vw; height:56vh; background:rgba(210,12,12,.55); bottom:-38vh; left:50%; transform:translateX(-50%);
+    animation:orb-b 26s ease-in-out infinite alternate;
+  }
+  .orb-l {
+    width:60vw; height:75vh; background:rgba(160,0,0,.24);
+    left:-18vw; top:25%;
+    animation:orb-l 32s ease-in-out infinite alternate;
+  }
+  .orb-r {
+    width:60vw; height:75vh; background:rgba(150,0,0,.22);
+    right:-18vw; top:18%;
+    animation:orb-r 29s ease-in-out infinite alternate;
+  }
+  @keyframes orb-b {
+    0%   { transform:translateX(-50%) translateY(0px)    scale(1); }
+    100% { transform:translateX(-50%) translateY(-160px) scale(1.18); }
+  }
+  @keyframes orb-l {
+    0%   { transform:translate(0px,   0px); }
+    100% { transform:translate(120px,-200px); }
+  }
+  @keyframes orb-r {
+    0%   { transform:translate(0px,  0px); }
+    100% { transform:translate(-100px,-170px); }
+  }
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb-b"></div><div class="orb orb-l"></div><div class="orb orb-r"></div></div>
+<canvas id="particles-canvas"></canvas>
+
+<header>
+  <a href="#home" class="logo">LA BATALLA DE LOS <span>PAPAGALLOS</span></a>
+  <div class="header-cd" id="header-cd">
+    <div class="header-cd-label" id="hcd-label">PRÓXIMO COMBATE</div>
+    <div class="header-cd-timer">
+      <span class="hct-num" id="hcd-d">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-h">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-m">--</span><span class="hct-sep">:</span>
+      <span class="hct-num" id="hcd-s">--</span>
+    </div>
+  </div>
+  <nav>
+    <a href="bracket.html">Bracket</a>
+    <a href="fechas.html">Fechas</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="https://discord.gg/aH4NMNwQve" target="_blank" class="btn-discord">
+      <svg viewBox="0 0 71 55" fill="currentColor"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.6.6a.2.2 0 0 0-.2.1c-.6 1.1-1.3 2.6-1.8 3.7a54 54 0 0 0-16.3 0 38 38 0 0 0-1.8-3.7.2.2 0 0 0-.2-.1A58.3 58.3 0 0 0 10.9 4.9a.2.2 0 0 0-.1.1C1.6 18.1-.9 31 .3 43.6c0 .1 0 .2.1.2A58.8 58.8 0 0 0 18 52c.1 0 .2 0 .2-.1 1.4-1.9 2.6-3.9 3.7-5.9.1-.1 0-.2-.1-.3a38.7 38.7 0 0 1-5.5-2.7.2.2 0 0 1 0-.3l1.1-.9a.2.2 0 0 1 .2 0c11.5 5.3 24 5.3 35.4 0a.2.2 0 0 1 .2 0l1.1.9c.1.1.1.2 0 .3a36.2 36.2 0 0 1-5.6 2.7c-.1 0-.1.2 0 .3 1.1 2 2.3 4 3.6 5.9.1.1.2.1.3.1A58.6 58.6 0 0 0 70.6 43.8c.1-.1.1-.2.1-.2C72 29.2 68.2 16.4 60.2 5a.2.2 0 0 0-.1-.1zM23.7 36.3c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2zm23.7 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2z"/></svg>
+      Discord
+    </a>
+  </nav>
+</header>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero-logo-wrap">
+    <img src="logo_BDLP.png" alt="Batalla de los Papagallos" class="hero-logo">
+  </div>
+  <div class="home-title">
+    <span class="line2">CS2 DUEL TOURNAMENT 2026</span>
+    <span class="line3">TEMPORADA 1 · 10 PLAYERS</span>
+  </div>
+  <div class="combat-banner-wrap">
+    <div class="combat-banner">
+      <iframe id="combat-flyer" src="Deathmatch Inicial Graphic.html" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" scrolling="no"></iframe>
+      <div class="combat-vs-overlay" id="combat-vs-overlay">
+        <div class="combat-player"><img id="np1-img" src="" alt=""><span class="combat-player-name" id="np1-name"></span></div>
+        <div class="vs-badge">VS</div>
+        <div class="combat-player"><img id="np2-img" src="" alt=""><span class="combat-player-name" id="np2-name"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="countdown-block">
+    <div class="cd-unit"><span class="cd-number" id="cd-d">--</span><span class="cd-label">días</span></div>
+    <div class="cd-unit"><span class="cd-number" id="cd-h">--</span><span class="cd-label">horas</span></div>
+    <div class="cd-unit"><span class="cd-number" id="cd-m">--</span><span class="cd-label">mins</span></div>
+    <div class="cd-unit"><span class="cd-number" id="cd-s">--</span><span class="cd-label">segs</span></div>
+  </div>
+  <div class="cd-label-row">
+    <p class="countdown-match-label" id="cd-label">Próximo combate</p>
+    <a class="scroll-arrow" href="#sobre">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6,9 12,15 18,9"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<section id="sobre">
+
+  <div class="sobre-block">
+    <div class="sobre-title">BATALLA DE LOS PAPAGALLOS 🐓</div>
+    <div class="sobre-sub">10 jugadores. 1 campeón. 1 Papagallo máximo.</div>
+    <div class="sobre-divider"></div>
+    <p class="sobre-text">Durante demasiado tiempo, el grupo ha vivido en la constante batalla por quién es más malo. Eso se acabó. La Batalla de los Papagallos, Duel Tournament es el primer torneo oficial del grupo — un 1v1 sin equipo que te cubra la espalda, sin culpar al compañero, sin excusas. Solo tú, tu aim y tu mental. Diez entran. Uno sale con dignidad.</p>
+  </div>
+
+  <div class="sobre-block">
+    <div class="sobre-title">¿CÓMO FUNCIONA? 🤔</div>
+    <div class="sobre-divider"></div>
+    <p class="sobre-text">El torneo se desarrolla en cinco fases diseñadas para que nadie llegue a la final por suerte.</p>
+    <div class="fases-list">
+      <div class="fase-item">
+        <div class="fase-label">Fase 1 — Deathmatch inicial</div>
+        <div class="fase-text">Todos los jugadores se pelean para definir los primeros matches. Recuerda prender los cheats y no ponerte nervioso.</div>
+      </div>
+      <div class="fase-item">
+        <div class="fase-label">Fase 2 — Partidos 1v1 — Al mejor de 3 matches</div>
+        <div class="fase-text">Cada jugador enfrenta a otro dependiendo su desempeño en el DM inicial. Aquí empieza la clasificación real. Cada victoria cuenta. Una derrota y pa fuera.</div>
+      </div>
+      <div class="fase-item">
+        <div class="fase-label">Fase 3 — Deathmatch de eliminación</div>
+        <div class="fase-text">Los mejores 5 jugadores de la fase anterior se enfrentan en un Deathmatch eliminatorio. El último de la tabla se va.</div>
+      </div>
+      <div class="fase-item">
+        <div class="fase-label">Fase 4 — Semifinal y Tercer lugar — Al mejor de 3 matches</div>
+        <div class="fase-text">Los cuatro mejores se cruzan en semifinales. Los perdedores disputan el tercer lugar antes de que se juegue la final.</div>
+      </div>
+      <div class="fase-item">
+        <div class="fase-label">Fase 5 — La Final 👑 — Al mejor de 5 matches</div>
+        <div class="fase-text">Dos jugadores. Al mejor de 5 mapas. El campeón se corona como el Papagallo Máximo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sobre-block">
+    <div class="sobre-title">GRACIAS. 🤍</div>
+    <div class="sobre-divider"></div>
+    <p class="sobre-text">Este proyecto es un homenaje a las horas de risas y rabias ocasionadas por nuestro incompetente grupo de Premier. A pesar de ser solo un juego, ha sido bonito el camino de vernos a todos aprender y mejorar competitivamente dentro del mismo, así como apoyarnos y rivalizarnos en igual medida. Gracias.</p>
+    <p class="sobre-text">A los timing Waltica, a los que nunca pueden ser el héroe, a los que recogen pipa medio, a los que no saben tirar fuego en inferno, a los que se fueron carreados en premier, a los King Famas, a los que rushean de CT. Este torneo es por y para ustedes. Que gane el mejor. O el menos malo.</p>
+  </div>
+
+</section>
+
+<footer><p>BATALLA DE LOS <span>PAPAGALLOS</span> · CS2 · <span id="fy"></span></p></footer>
+
+<script>
+const PLAYERS = {
+  "76561199550607862":{"name":"FULLRECORDS","avatar":"https://avatars.steamstatic.com/970695a0720b604e3448204cb2811091bdab699e_medium.jpg"},
+  "76561199679639257":{"name":"Dom","avatar":"https://avatars.steamstatic.com/0abb44703585b0e6c43ad53886e04fd294208daf_medium.jpg"},
+  "76561199148697791":{"name":"Matador Salas","avatar":"https://avatars.steamstatic.com/43b5674a82decb2ebb32c860a99f4d505ae3ce57_medium.jpg"},
+  "76561198281472932":{"name":"Baltica14","avatar":"https://avatars.steamstatic.com/3ae572cafefbf47023c385a1213466e8e83c7072_medium.jpg"},
+  "76561199841015593":{"name":"Pablito Marmol","avatar":"https://avatars.steamstatic.com/3416524307f21b0f0b0666e87d7b730beba5ed60_medium.jpg"},
+  "76561198064411344":{"name":"Wayoman","avatar":"https://avatars.steamstatic.com/f67afcb84d6c01125d4cbe35a3491d201ecf4a9c_medium.jpg"},
+  "76561198220829112":{"name":"ZachXBT","avatar":"https://avatars.steamstatic.com/715f0fbeb04d9217e47c9445e9734a729a7c9070_medium.jpg"},
+  "76561198147808566":{"name":"Toallín","avatar":"https://avatars.steamstatic.com/2c0b15cbdceefc2070500651d03ff68d47a56ce0_medium.jpg"},
+  "76561199052181492":{"name":"mateo186GB","avatar":"https://avatars.steamstatic.com/025d05d0c15afceb85db5965c763bdd7ca862611_medium.jpg"},
+  "76561198009515551":{"name":"Gusano0","avatar":"https://avatars.steamstatic.com/3a6df1fe8908553e55a9080c0d9bd986873d49bc_medium.jpg"}
+};
+
+function pl(id){ return id && PLAYERS[id] ? PLAYERS[id] : null; }
+
+async function loadData(){
+  try{ const r=await fetch('/api/state'); if(!r.ok) throw 0; return await r.json(); }
+  catch{
+    try{ const s=localStorage.getItem('papagallos-v3'); if(s) return JSON.parse(s); } catch{}
+    return null;
+  }
+}
+
+// ── COUNTDOWN ──
+function initCountdown(data){
+  const all=[]; const now=new Date();
+  function collect(matches,round){ (matches||[]).forEach(m=>{ if(m&&m.date) all.push({...m,round}); }); }
+  collect(data.fase1?.matches,'Fase 1'); collect(data.semifinales?.matches,'Semifinal');
+  if(data.tercer_lugar?.date) all.push({...data.tercer_lugar,round:'3er Lugar'});
+  if(data.gran_final?.date)   all.push({...data.gran_final,round:'Gran Final'});
+  if(data.dm_inicial?.date)   all.push({...data.dm_inicial, round:'DM Inicial', isDM:true});
+  if(data.dm_elim?.date)      all.push({...data.dm_elim,    round:'DM Eliminación', isDM:true});
+  all.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const next=all.find(m=>new Date(m.date)>now&&!m.finished);
+  if(!next) return;
+  startCountdown(next.date);
+  if(next.isDM){
+    const n = next.round==='DM Inicial' ? 'DEATHMATCH INICIAL · 10 JUGADORES' : 'DEATHMATCH ELIMINACIÓN';
+    document.getElementById('cd-label').textContent=n;
+    document.getElementById('hcd-label').textContent=n;
+    // flyer stays visible
+  } else {
+    const pa=pl(next.player_a), pb=pl(next.player_b);
+    const label=`${pa?pa.name:'TBD'} vs ${pb?pb.name:'TBD'}`;
+    document.getElementById('cd-label').textContent=label;
+    document.getElementById('hcd-label').textContent=label;
+    if(pa&&pb){
+      document.getElementById('np1-img').src=pa.avatar; document.getElementById('np1-name').textContent=pa.name;
+      document.getElementById('np2-img').src=pb.avatar; document.getElementById('np2-name').textContent=pb.name;
+      const flyer=document.getElementById('combat-flyer');
+      if(flyer) flyer.style.display='none';
+      document.getElementById('combat-vs-overlay').classList.add('active');
+    }
+  }
+}
+
+function startCountdown(target){
+  const fmt=n=>String(n).padStart(2,'0');
+  function getVals(){
+    const diff=new Date(target)-new Date(); const zero=diff<=0;
+    return [
+      fmt(zero?0:Math.floor(diff/86400000)),
+      fmt(zero?0:Math.floor((diff%86400000)/3600000)),
+      fmt(zero?0:Math.floor((diff%3600000)/60000)),
+      fmt(zero?0:Math.floor((diff%60000)/1000))
+    ];
+  }
+  function tick(){
+    const [d,h,m,s]=getVals();
+    document.getElementById('cd-d').textContent=d; document.getElementById('cd-h').textContent=h;
+    document.getElementById('cd-m').textContent=m; document.getElementById('cd-s').textContent=s;
+    document.getElementById('hcd-d').textContent=d; document.getElementById('hcd-h').textContent=h;
+    document.getElementById('hcd-m').textContent=m; document.getElementById('hcd-s').textContent=s;
+  }
+  // Glitch reveal on first load, then normal tick
+  const [d,h,m,s]=getVals();
+  document.getElementById('hcd-d').textContent=d; document.getElementById('hcd-h').textContent=h;
+  document.getElementById('hcd-m').textContent=m; document.getElementById('hcd-s').textContent=s;
+  const pairs=[[document.getElementById('cd-d'),d],[document.getElementById('cd-h'),h],[document.getElementById('cd-m'),m],[document.getElementById('cd-s'),s]];
+  let done=0; const onDone=()=>{ if(++done===4) setInterval(tick,1000); };
+  pairs.forEach(([el,val],i)=>setTimeout(()=>glitchRevealNum(el,val,onDone),i*420));
+}
+
+
+// ── PARTICLES + EMBERS + LIGHTNING ──
+function initParticles(){
+  const canvas=document.getElementById('particles-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,pts;
+  const embers=[];
+  const bolts=[];
+  const EMBER_COLORS=['rgba(224,26,26,','rgba(255,70,10,','rgba(245,120,0,','rgba(255,160,20,'];
+  let frame=0, nextBolt=120;
+
+  function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+  function make(){ pts=Array.from({length:80},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.3,a:Math.random()*.5+.1,red:Math.random()<.25})); }
+
+  // ── EMBER ──
+  function spawnEmber(){
+    const col=EMBER_COLORS[Math.floor(Math.random()*EMBER_COLORS.length)];
+    embers.push({x:Math.random()*W,y:H+4,vx:(Math.random()-.5)*.8,vy:-(Math.random()*2.2+.6),r:Math.random()*1.8+.4,life:1,decay:Math.random()*.005+.003,col,flicker:Math.random()*Math.PI*2});
+  }
+
+  // ── LIGHTNING ──
+  function jag(x1,y1,x2,y2,rough,depth){
+    if(depth===0) return [{x:x1,y:y1},{x:x2,y:y2}];
+    const mx=(x1+x2)/2+(Math.random()-.5)*rough;
+    const my=(y1+y2)/2+(Math.random()-.5)*rough*.15;
+    return [...jag(x1,y1,mx,my,rough/2,depth-1).slice(0,-1),...jag(mx,my,x2,y2,rough/2,depth-1)];
+  }
+
+  function spawnBolt(){
+    const x=Math.random()*W;
+    const depth=H*(0.45+Math.random()*.5);
+    const pts2=jag(x,-10,x+(Math.random()-.5)*180,depth,160,8);
+    const branches=[];
+    for(let i=4;i<pts2.length-4;i+=Math.floor(Math.random()*6+3)){
+      if(Math.random()<.4){
+        const bLen=25+Math.random()*90;
+        const ang=(Math.random()-.5)*1.4;
+        const brPts=jag(pts2[i].x,pts2[i].y,pts2[i].x+Math.sin(ang)*bLen,pts2[i].y+Math.cos(ang)*bLen,50,5);
+        const brStart=i/pts2.length; // normalized spawn position on main bolt
+        branches.push({pts:brPts,start:brStart});
+      }
+    }
+    bolts.push({
+      pts:pts2, branches,
+      progress:0,
+      speed:0.07+Math.random()*.05,
+      phase:'travel',
+      life:1,
+      decay:Math.random()*.07+.055
+    });
+  }
+
+  function drawBolt(points,alpha,lw){
+    if(!points||points.length<2) return;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x,points[0].y);
+    for(const p of points) ctx.lineTo(p.x,p.y);
+    ctx.strokeStyle=`rgba(200,0,0,${alpha*.22})`; ctx.lineWidth=lw*5; ctx.stroke();
+    ctx.strokeStyle=`rgba(230,30,30,${alpha*.5})`;  ctx.lineWidth=lw*2; ctx.stroke();
+    ctx.strokeStyle=`rgba(255,160,160,${alpha*.95})`; ctx.lineWidth=lw*.6; ctx.stroke();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    frame++;
+
+    // particles
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.red?`rgba(224,26,26,${p.a})`:`rgba(200,200,200,${p.a*.4})`; ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){
+        const a=(1-dist/120)*.15;
+        ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.strokeStyle=(pts[i].red||pts[j].red)?`rgba(224,26,26,${a})`:`rgba(255,255,255,${a*.4})`;
+        ctx.lineWidth=.5; ctx.stroke();
+      }
+    }
+
+    // embers
+    if(Math.random()<.45) spawnEmber();
+    for(let i=embers.length-1;i>=0;i--){
+      const e=embers[i];
+      e.flicker+=.09; e.x+=e.vx+Math.sin(e.flicker)*.18; e.y+=e.vy; e.vy*=.997; e.life-=e.decay;
+      if(e.life<=0){embers.splice(i,1);continue;}
+      const pulse=.7+Math.abs(Math.sin(e.flicker))*.3;
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=e.col+e.life+')'; ctx.fill();
+      const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.r*5);
+      g.addColorStop(0,e.col+(e.life*.45)+')'); g.addColorStop(1,e.col+'0)');
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r*5,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    }
+
+    // lightning spawn
+    if(frame>=nextBolt){
+      spawnBolt();
+      if(Math.random()<.35){ setTimeout(spawnBolt, 80+Math.random()*120); }
+      if(Math.random()<.15){ setTimeout(spawnBolt, 220+Math.random()*180); }
+      nextBolt=frame+Math.floor(Math.random()*480+360);
+    }
+
+    // lightning draw
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    for(let i=bolts.length-1;i>=0;i--){
+      const b=bolts[i];
+
+      if(b.phase==='travel'){
+        b.progress+=b.speed;
+        if(b.progress>=1){ b.progress=1; b.phase='fade'; }
+        const end=Math.max(2,Math.floor(b.pts.length*b.progress));
+        drawBolt(b.pts.slice(0,end),1,2);
+        // branches appear as main bolt passes their origin
+        for(const br of b.branches){
+          if(b.progress>br.start){
+            const brProg=Math.min(1,(b.progress-br.start)/(1-br.start));
+            const brEnd=Math.max(2,Math.floor(br.pts.length*brProg));
+            drawBolt(br.pts.slice(0,brEnd),.7,.9);
+          }
+        }
+      } else {
+        b.life-=b.decay;
+        if(b.life<=0){bolts.splice(i,1);continue;}
+        // flash at start of fade
+        if(b.life>0.88){
+          ctx.fillStyle=`rgba(180,0,0,${(b.life-.88)*0.07})`;
+          ctx.fillRect(0,0,W,H);
+        }
+        drawBolt(b.pts,b.life,2);
+        for(const br of b.branches) drawBolt(br.pts,b.life*.6,.9);
+      }
+    }
+    ctx.lineCap='butt'; ctx.lineJoin='miter';
+
+    requestAnimationFrame(draw);
+  }
+  resize(); make(); draw();
+  window.addEventListener('resize',()=>{resize();make();});
+}
+
+document.getElementById('fy').textContent=new Date().getFullYear();
+
+function glitchRevealNum(el, text, onDone){
+  const gc='!<>-_\\/[]{}=+*^?#@$%▓░█▌▐0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lockAt=Array.from({length:text.length},(_,i)=>Math.floor(i*18)+12+Math.floor(Math.random()*8));
+  let frame=0; const maxFrame=Math.max(...lockAt)+3;
+  el.classList.add('glitching');
+  const id=setInterval(()=>{
+    el.textContent=text.split('').map((c,i)=>frame>=lockAt[i]?c:gc[Math.floor(Math.random()*gc.length)]).join('');
+    frame++;
+    if(frame>=maxFrame){
+      clearInterval(id); el.textContent=text;
+      el.classList.remove('glitching'); el.classList.add('glitch-settled');
+      if(onDone) onDone();
+    }
+  },38);
+}
+
+async function init(){
+  initParticles();
+  const data=await loadData();
+  if(data) initCountdown(data);
+}
+init();
+</script>
+</body>
+</html>
