@@ -296,11 +296,16 @@ const PLAYERS = {
 function pl(id){ return id && PLAYERS[id] ? PLAYERS[id] : null; }
 
 async function loadData(){
-  try{ const r=await fetch('/api/state'); if(!r.ok) throw 0; return await r.json(); }
-  catch{
-    try{ const s=localStorage.getItem('papagallos-v3'); if(s) return JSON.parse(s); } catch{}
-    return null;
+  let cached=null;
+  try{ const s=localStorage.getItem('papagallos-v3'); if(s) cached=JSON.parse(s); }catch{}
+  if(cached){
+    fetch('/api/state').then(r=>r.ok?r.json():null).then(d=>{
+      if(d&&Object.keys(d).length) localStorage.setItem('papagallos-v3',JSON.stringify(d));
+    }).catch(()=>{});
+    return cached;
   }
+  try{ const r=await fetch('/api/state'); if(r.ok){ const d=await r.json(); localStorage.setItem('papagallos-v3',JSON.stringify(d)); return d; }}catch{}
+  return null;
 }
 
 // ── COUNTDOWN ──
