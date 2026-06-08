@@ -208,7 +208,7 @@ async function loadData(){
   try{ const s=localStorage.getItem('papagallos-v3'); if(s) cached=JSON.parse(s); }catch{}
   if(cached){
     fetch('/api/state').then(r=>r.ok?r.json():null).then(d=>{
-      if(d&&Object.keys(d).length) localStorage.setItem('papagallos-v3',JSON.stringify(d));
+      if(d&&Object.keys(d).length){ localStorage.setItem('papagallos-v3',JSON.stringify(d)); renderLeaderboard(d); }
     }).catch(()=>{});
     return cached;
   }
@@ -252,16 +252,18 @@ function initHeaderCountdown(data){
 // KDA = (Kills + Assists) / max(Deaths, 1)
 function calcAgg(lb, dm) {
   const dmK=(dm?.kills)||0, dmD=(dm?.deaths)||0, dmA=(dm?.assists)||0, dmKn=(dm?.knife)||0;
+  const dmHs = dm?.hs_pct ?? null;
   const entries = lb ? Object.values(lb).filter(s=>s&&s.kills!==''&&s.kills!==undefined) : [];
   if (!entries.length && !dmK) return null;
   const sum = f=>entries.reduce((a,s)=>a+(parseFloat(s[f])||0),0);
-  const avg = f=>entries.length?sum(f)/entries.length:0;
+  const hsVals = [...entries.filter(e=>e.hs_pct!==''&&e.hs_pct!=null).map(e=>parseFloat(e.hs_pct)||0)];
+  if(dmHs !== null) hsVals.push(dmHs);
   const K=sum('kills')+dmK, D=sum('deaths')+dmD, A=sum('assists')+dmA;
   const kda_raw = (K+A) / Math.max(D,1);
   return {
     matches: entries.length, kills:K, deaths:D, assists:A,
     kda: kda_raw.toFixed(2), kda_raw,
-    hs_pct: entries.length ? avg('hs_pct').toFixed(1) : null,
+    hs_pct: hsVals.length ? (hsVals.reduce((a,v)=>a+v,0)/hsVals.length).toFixed(1) : null,
     rw: sum('rw'), rl: sum('rl'), knife: sum('knife')+dmKn
   };
 }
@@ -277,11 +279,13 @@ function renderLeaderboard(data) {
   const ranked = ALL_IDS.map(id => {
     const pDM = dmEnts.filter(e=>e.playerId===id);
     const hasDM = pDM.some(e=>e.kills!==null);
+    const dmHsEnts = pDM.filter(e=>e.hs_pct!=null);
     const dmStats = hasDM ? {
       kills:   pDM.reduce((s,e)=>s+(e.kills||0),0),
       deaths:  pDM.reduce((s,e)=>s+(e.deaths||0),0),
       assists: pDM.reduce((s,e)=>s+(e.assists||0),0),
       knife:   pDM.reduce((s,e)=>s+(e.knife||0),0),
+      hs_pct:  dmHsEnts.length ? dmHsEnts.reduce((s,e)=>s+e.hs_pct,0)/dmHsEnts.length : null,
     } : null;
     const agg = calcAgg(lb[id], dmStats);
     return { id, p: PLAYERS[id], agg };
