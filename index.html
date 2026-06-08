@@ -133,7 +133,7 @@
   /* ── OST Player ── */
   .ost-player {
     position:fixed; top:64px; right:0; z-index:99;
-    width:220px;
+    width:350px;
     background:rgba(0,0,0,0.88); backdrop-filter:blur(12px);
     border-left:1px solid rgba(224,26,26,0.25);
     border-bottom:1px solid rgba(224,26,26,0.25);
@@ -178,7 +178,8 @@
     width:9px; height:9px; border:none;
     border-radius:50%; background:#cc0000; cursor:pointer;
   }
-  @media(max-width:480px) { .ost-player { width:160px; } }
+  @media(max-width:768px) { .ost-player { width:100%; right:0; } }
+  @media(max-width:480px) { .ost-player { width:100%; } }
 
   @media(max-width:768px) {
     header { padding:0 20px; }
