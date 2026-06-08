@@ -630,7 +630,8 @@ init();
   let order;
   try { order=JSON.parse(sessionStorage.getItem(SS_KEY)); } catch{}
   if(!order||order.length!==PLAYLIST.length){
-    order=shuffle(PLAYLIST);
+    const [first,...rest]=PLAYLIST;
+    order=[first,...shuffle(rest)];
     try{ sessionStorage.setItem(SS_KEY,JSON.stringify(order)); }catch{}
   }
 
