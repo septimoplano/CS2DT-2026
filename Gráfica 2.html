@@ -295,6 +295,26 @@ canvas {
   50%, 100% { opacity: 0; }
 }
 
+/* ── Player avatars ── */
+.player-avatar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 8;
+  opacity: 0;
+  animation: revealUp .3s ease 2.4s forwards;
+}
+.player-avatar.player-left  { left: 65px; }
+.player-avatar.player-right { right: 65px; }
+.player-avatar img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(204,0,0,0.7);
+  box-shadow: 0 0 14px rgba(204,0,0,0.5), 0 0 4px rgba(204,0,0,0.3);
+  display: block;
+}
+
 </style>
 </head>
 <body>
@@ -311,11 +331,18 @@ canvas {
   <div class="corner bl"></div>
   <div class="corner br"></div>
 
+  <div class="player-avatar player-left">
+    <img src="https://avatars.steamstatic.com/970695a0720b604e3448204cb2811091bdab699e_medium.jpg" alt="FULLRECORDS">
+  </div>
+  <div class="player-avatar player-right">
+    <img src="https://avatars.steamstatic.com/3a6df1fe8908553e55a9080c0d9bd986873d49bc_medium.jpg" alt="Gusano0">
+  </div>
+
   <div class="content">
     <div class="badge">Próximo Combate</div>
 
     <div class="title-wrap">
-      <span class="title" data-text="FULL RECORDS VS GUSANOO">FULL RECORDS VS GUSANOO</span>
+      <span class="title" data-text="FULLRECORDS VS GUSANOO">FULLRECORDS VS GUSANOO</span>
     </div>
 
     <div class="subtitle">1V1 • MEJOR DE 3</div>
@@ -548,7 +575,7 @@ canvas {
 
   /* Title scramble — starts at 0.9s, ~18 chars × 3 ticks × 45ms ≈ 2.4s total */
   const titleEl = document.querySelector('.title');
-  scrambleReveal(titleEl, 'FULL RECORDS VS GUSANOO', 900);
+  scrambleReveal(titleEl, 'FULLRECORDS VS GUSANOO', 900);
 
   requestAnimationFrame(frame);
 })();
