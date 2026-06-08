@@ -1066,8 +1066,18 @@ function toggleFinished(matchId) {
   if(m.finished){ m.finished=false; m.winner=null; m.score_a=null; m.score_b=null; }
   else {
     if(!m.player_a||!m.player_b){toast('Asigna ambos jugadores primero');return;}
-    const sa=m.score_a??0, sb=m.score_b??0;
-    if(sa===sb){toast('Scores empatados — ajusta primero');return;}
+    let sa=m.score_a??null, sb=m.score_b??null;
+    // Auto-calculate from map results if scores not entered manually
+    if(sa===null||sb===null){
+      let ca=0,cb=0;
+      (m.maps||[]).forEach(map=>{
+        const rwa=parseFloat(map.pa?.rw||0), rwb=parseFloat(map.pb?.rw||0);
+        if(rwa>0||rwb>0){ if(rwa>rwb) ca++; else if(rwb>rwa) cb++; }
+      });
+      sa=ca; sb=cb;
+    }
+    if(sa===sb){toast('Sin ganador claro — ingresa el score o revisa los mapas');return;}
+    m.score_a=sa; m.score_b=sb;
     m.winner=sa>sb?m.player_a:m.player_b;
     m.finished=true;
   }
