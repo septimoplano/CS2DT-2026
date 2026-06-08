@@ -334,9 +334,6 @@ function initCountdown(data){
     if(pa&&pb){
       document.getElementById('np1-img').src=pa.avatar; document.getElementById('np1-name').textContent=pa.name;
       document.getElementById('np2-img').src=pb.avatar; document.getElementById('np2-name').textContent=pb.name;
-      const flyer=document.getElementById('combat-flyer');
-      if(flyer) flyer.style.display='none';
-      document.getElementById('combat-vs-overlay').classList.add('active');
     }
   }
 }
