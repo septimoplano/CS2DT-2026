@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/logo_BDLP.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Por Definir — La Batalla de los Papagallos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Share+Tech+Mono&display=block" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #080000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.graphic {
+  position: relative;
+  width: min(800px, 100vw);
+  aspect-ratio: 800 / 360;
+  overflow: hidden;
+  background: #000;
+  cursor: default;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+#bg   { z-index: 1; }
+#lg   { z-index: 3; pointer-events: none; }
+
+.vignette {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: radial-gradient(ellipse 90% 90% at 50% 50%,
+    transparent 25%, rgba(0,0,0,0.65) 100%);
+}
+
+.scanlines {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent 0px, transparent 3px,
+    rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
+  );
+}
+
+.corner {
+  position: absolute;
+  width: 18px; height: 18px;
+  z-index: 8;
+}
+.corner::before, .corner::after {
+  content: '';
+  position: absolute;
+  background: #cc0000;
+}
+.corner::before { width: 100%; height: 2px; top: 0; left: 0; }
+.corner::after  { width: 2px; height: 100%; top: 0; left: 0; }
+.corner.tl { top: 14px; left: 14px; }
+.corner.tr { top: 14px; right: 14px; transform: scaleX(-1); }
+.corner.bl { bottom: 14px; left: 14px; transform: scaleY(-1); }
+.corner.br { bottom: 14px; right: 14px; transform: scale(-1,-1); }
+
+.streaks {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(100deg, rgba(150,0,0,0.18) 0%, transparent 22%),
+    linear-gradient(260deg, rgba(150,0,0,0.15) 0%, transparent 22%);
+}
+
+.content {
+  position: absolute; inset: 0; z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 36px;
+  gap: 5px;
+  text-align: center;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  color: #fff;
+}
+
+.badge {
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: #cc0000;
+  text-transform: uppercase;
+  font-weight: bold;
+  opacity: 0;
+  animation: revealUp .35s ease .4s forwards;
+}
+.badge::before { content: '▶  '; }
+.badge::after  { content: '  ◀'; }
+
+.title-wrap {
+  position: relative;
+  line-height: 1;
+}
+
+.title {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(24px, 5vw, 46px);
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffffff;
+  position: relative;
+  white-space: nowrap;
+  opacity: 0;
+  text-shadow: 0 0 40px rgba(200,0,0,0.4);
+}
+
+.title.revealed {
+  animation: glitchLoop 7s 2.8s infinite;
+}
+
+.title.scrambling {
+  text-shadow: 3px 0 #ff2020, -3px 0 rgba(255,255,255,0.35), 0 0 25px rgba(200,0,0,.7);
+}
+.title.scrambling::before,
+.title.scrambling::after { opacity: 0 !important; animation: none !important; }
+
+.title::before,
+.title::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.title::before {
+  color: #ff2020;
+  animation: ghostA 7s 2.2s infinite;
+}
+.title::after {
+  color: rgba(255,200,200,.55);
+  animation: ghostB 7s 2.2s infinite;
+}
+
+.subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: #cc0000;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  animation: revealUp .3s ease 1.8s forwards;
+}
+
+.divider {
+  width: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, #cc0000 30%, #cc0000 70%, transparent);
+  animation: expandLine .5s ease 2.15s forwards;
+  opacity: 0;
+  margin: 2px 0;
+}
+
+.desc-wrap {
+  max-width: 520px;
+  opacity: 0;
+  margin-top: 3px;
+  animation: fadeIn .4s ease 3.6s forwards;
+}
+
+.desc {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255,160,160,.6);
+  line-height: 1.9;
+  text-transform: uppercase;
+}
+
+.cursor-line {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  margin-top: 3px;
+  animation: fadeIn .1s ease 5.6s forwards;
+}
+
+.cursor {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  color: #ff0000;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+  animation: blink 1s 5.6s step-start infinite;
+  text-shadow: 0 0 8px #ff0000, 0 0 20px rgba(255,0,0,.5);
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes expandLine {
+  from { width: 0; opacity: 0; }
+  to   { width: 100px; opacity: 1; }
+}
+@keyframes glitchLoop {
+  0%,  87%, 100% { transform: none; text-shadow: 0 0 40px rgba(200,0,0,.4); }
+  88%  { transform: translate(-3px, 1px) skewX(-2deg);
+         text-shadow: 4px 0 #ff0000, -2px 0 rgba(255,80,80,.35), 0 0 40px rgba(200,0,0,.6); }
+  89%  { transform: translate(3px, -1px);
+         text-shadow: -3px 0 rgba(255,200,200,.5), 3px 0 #ff0000; }
+  90%  { transform: translate(-1px, 0); }
+  91%  { transform: translate(5px, 0);
+         text-shadow: -5px 0 #ff0000, 3px 0 rgba(255,100,100,.4), 0 0 40px rgba(200,0,0,.6); }
+  92%  { transform: none; text-shadow: 0 0 40px rgba(200,0,0,.4); }
+}
+@keyframes ghostA {
+  0%,  87%, 100% { opacity: 0; }
+  88%, 89% {
+    opacity: .75;
+    clip-path: polygon(0 10%, 100% 10%, 100% 42%, 0 42%);
+    transform: translate(-4px, 0);
+  }
+  91%, 92% {
+    opacity: .6;
+    clip-path: polygon(0 58%, 100% 58%, 100% 88%, 0 88%);
+    transform: translate(4px, 2px);
+  }
+}
+@keyframes ghostB {
+  0%,  87%, 100% { opacity: 0; }
+  89%, 90% {
+    opacity: .45;
+    clip-path: polygon(0 45%, 100% 45%, 100% 68%, 0 68%);
+    transform: translate(3px, -2px);
+  }
+}
+@keyframes datePulse {
+  0%,  84%, 100% { opacity: 0; }
+  85%, 87% { opacity: .5; transform: translate(-2px,0); }
+  86%       { opacity: 0; }
+}
+@keyframes blink {
+  0%,  49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="graphic">
+  <canvas id="bg"></canvas>
+  <canvas id="lg"></canvas>
+  <div class="streaks"></div>
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div class="content">
+    <div class="badge">Próximo Combate</div>
+
+    <div class="title-wrap">
+      <span class="title" data-text="POR DEFINIR">POR DEFINIR</span>
+    </div>
+
+    <div class="subtitle">PRÓXIMAMENTE</div>
+    <div class="divider"></div>
+
+    <div class="desc-wrap">
+      <p class="desc" id="typewriter"></p>
+    </div>
+
+    <div class="cursor-line">
+      <span class="cursor">_</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const graphic  = document.querySelector('.graphic');
+  const bgCanvas = document.getElementById('bg');
+  const lgCanvas = document.getElementById('lg');
+  const bgCtx    = bgCanvas.getContext('2d');
+  const lgCtx    = lgCanvas.getContext('2d');
+
+  function resize() {
+    const r = graphic.getBoundingClientRect();
+    bgCanvas.width = lgCanvas.width  = r.width;
+    bgCanvas.height = lgCanvas.height = r.height;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const EMBER_N = 75;
+  const embers  = [];
+
+  class Ember {
+    constructor(init) { this.reset(init); }
+    reset(init) {
+      const w = bgCanvas.width, h = bgCanvas.height;
+      this.x  = Math.random() * w;
+      this.y  = init ? Math.random() * h : h + 6;
+      this.vx = (Math.random() - .5) * .35;
+      this.vy = -(Math.random() * .85 + .2);
+      this.r  = Math.random() * 2.4 + .4;
+      this.life  = init ? Math.random() * .8 + .1 : 1;
+      this.decay = Math.random() * .004 + .0018;
+      const hue  = Math.random() * 24 + 5;
+      const lit  = 52 + Math.random() * 36;
+      this.color = `hsl(${hue},100%,${lit}%)`;
+    }
+    update() {
+      this.x   += this.vx + (Math.random() - .5) * .05;
+      this.y   += this.vy;
+      this.life -= this.decay;
+      if (this.life <= 0) this.reset(false);
+    }
+    draw(ctx) {
+      ctx.save();
+      ctx.globalAlpha  = Math.pow(this.life, .55) * .88;
+      ctx.shadowBlur   = 7;
+      ctx.shadowColor  = this.color;
+      ctx.fillStyle    = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for (let i = 0; i < EMBER_N; i++) embers.push(new Ember(true));
+
+  let lgFade   = 0;
+  let nextBolt = 750;
+
+  function bolt(ctx, x1, y1, x2, y2, depth) {
+    if (depth > 4) return;
+    const spread = 40 / (depth + 1);
+    const mx = (x1 + x2) / 2 + (Math.random() - .5) * spread;
+    const my = (y1 + y2) / 2 + (Math.random() - .5) * (spread * .4);
+    ctx.moveTo(x1, y1); ctx.lineTo(mx, my); ctx.lineTo(x2, y2);
+    if (depth < 3 && Math.random() > .52) {
+      bolt(ctx, mx, my, mx + (Math.random() - .5) * 80, my + Math.random() * 55, depth + 1);
+    }
+  }
+
+  function fireLightning() {
+    const w = lgCanvas.width, h = lgCanvas.height;
+    lgCtx.clearRect(0, 0, w, h);
+    lgFade = 1;
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+      const fromSide = Math.random() > .65;
+      const sx = fromSide ? (Math.random() > .5 ? 0 : w) : Math.random() * w;
+      const sy = fromSide ? Math.random() * h * .5 : 0;
+      const ex = sx + (Math.random() - .5) * 140;
+      const ey = sy + h * (.3 + Math.random() * .45);
+      lgCtx.save();
+      lgCtx.beginPath();
+      lgCtx.strokeStyle = `rgba(255,0,0,${.55 + Math.random() * .3})`;
+      lgCtx.lineWidth   = 2.5;
+      lgCtx.shadowBlur  = 22;
+      lgCtx.shadowColor = '#ff0000';
+      bolt(lgCtx, sx, sy, ex, ey, 0);
+      lgCtx.stroke();
+      lgCtx.restore();
+      lgCtx.save();
+      lgCtx.beginPath();
+      lgCtx.strokeStyle = 'rgba(255,230,230,.95)';
+      lgCtx.lineWidth   = .7;
+      lgCtx.shadowBlur  = 4;
+      lgCtx.shadowColor = '#ff8080';
+      bolt(lgCtx, sx, sy, ex, ey, 0);
+      lgCtx.stroke();
+      lgCtx.restore();
+    }
+  }
+
+  const SCRAMBLE_POOL = '!<>-_\/[]{}=+*^?#@%$X0123456789ABCDFGHJKLPQRTVWYZ';
+  const SCRAMBLE_MS   = 1800;
+
+  function scrambleReveal(el, finalText, startDelay) {
+    setTimeout(() => {
+      el.style.opacity = '1';
+      el.classList.add('scrambling');
+      const chars = finalText.split('');
+      const total = chars.filter(c => c !== ' ').length;
+      const t0    = performance.now();
+      function tick(now) {
+        const pct    = Math.min((now - t0) / SCRAMBLE_MS, 1);
+        const locked = Math.floor(pct * total);
+        let rendered = '', seen = 0;
+        for (let i = 0; i < chars.length; i++) {
+          if (chars[i] === ' ') { rendered += ' '; continue; }
+          seen++;
+          rendered += seen <= locked
+            ? chars[i]
+            : SCRAMBLE_POOL[Math.floor(Math.random() * SCRAMBLE_POOL.length)];
+        }
+        el.textContent = rendered;
+        if (pct < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      setTimeout(() => {
+        el.textContent = finalText;
+        el.className   = 'title revealed';
+      }, SCRAMBLE_MS + 60);
+    }, startDelay);
+  }
+
+  const TEXT   = 'EL PRÓXIMO COMBATE ESTÁ POR DEFINIRSE.\nPUEDES RELAJARTE UN POCO.';
+  const typeEl = document.getElementById('typewriter');
+  let   typed  = 0;
+  let   typingStarted = false;
+
+  function typeNext() {
+    if (typed < TEXT.length) {
+      typeEl.innerHTML = TEXT.slice(0, ++typed).replace(/\n/g, '<br>');
+      setTimeout(typeNext, 13 + Math.random() * 22);
+    }
+  }
+
+  let lastT = 0;
+
+  function frame(t) {
+    lastT = lastT || t;
+    const w = bgCanvas.width, h = bgCanvas.height;
+    const g = bgCtx.createRadialGradient(w * .5, h * .65, 0, w * .5, h * .65, w * .8);
+    g.addColorStop(0,   '#230000');
+    g.addColorStop(.55, '#0e0000');
+    g.addColorStop(1,   '#000000');
+    bgCtx.fillStyle = g;
+    bgCtx.fillRect(0, 0, w, h);
+    if (lgFade > 0) {
+      bgCtx.fillStyle = `rgba(55,0,0,${lgFade * .14})`;
+      bgCtx.fillRect(0, 0, w, h);
+      lgFade *= .86;
+      if (lgFade < .012) { lgFade = 0; lgCtx.clearRect(0, 0, w, h); }
+    }
+    embers.forEach(e => { e.update(); e.draw(bgCtx); });
+    if (t >= nextBolt) {
+      fireLightning();
+      nextBolt = t + 2000 + Math.random() * 3500;
+    }
+    if (t > 3800 && !typingStarted) { typingStarted = true; typeNext(); }
+    requestAnimationFrame(frame);
+  }
+
+  setTimeout(fireLightning, 750);
+  setTimeout(fireLightning, 1150);
+
+  const titleEl = document.querySelector('.title');
+  scrambleReveal(titleEl, 'POR DEFINIR', 900);
+
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

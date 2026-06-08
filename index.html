@@ -207,7 +207,7 @@
   </div>
   <div class="combat-banner-wrap">
     <div class="combat-banner">
-      <iframe id="combat-flyer" src="flyer1v1.html" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" scrolling="no"></iframe>
+      <iframe id="combat-flyer" src="flyerundefined.html" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" scrolling="no"></iframe>
       <div class="combat-vs-overlay" id="combat-vs-overlay">
         <div class="combat-player"><img id="np1-img" src="" alt=""><span class="combat-player-name" id="np1-name"></span></div>
         <div class="vs-badge">VS</div>
@@ -319,8 +319,8 @@ function initCountdown(data){
   if(data.dm_elim?.date)      all.push({...data.dm_elim,    round:'DM Eliminación', isDM:true});
   all.sort((a,b)=>new Date(a.date)-new Date(b.date));
   const next=all.find(m=>new Date(m.date)>now&&!m.finished);
-  if(!next) return;
   const flyer=document.getElementById('combat-flyer');
+  if(!next){ if(flyer) flyer.src='flyerundefined.html'; return; }
   if(flyer) flyer.src = (next.isDM && next.round==='DM Eliminación') ? 'flyerdm.html' : 'flyer1v1.html';
   startCountdown(next.date);
   if(next.isDM){
