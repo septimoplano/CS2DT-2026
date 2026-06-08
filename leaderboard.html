@@ -151,6 +151,7 @@
   .o5{left:4%;   top:70%; animation:d4 28s ease-in-out infinite alternate;}
   .o6{left:56%;  top:66%; animation:d1 21s ease-in-out infinite alternate; width:35vw; height:35vh;}
 </style>
+<link rel="stylesheet" href="ost-player.css">
 </head>
 <body>
 <div class="bg-orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div><div class="orb o5"></div><div class="orb o6"></div></div>
@@ -432,5 +433,21 @@ async function init(){
 }
 init();
 </script>
+<div class="ost-player" id="ost-player" style="display:none">
+  <div class="ost-track" id="ost-track-name">—</div>
+  <div class="ost-progress-wrap">
+    <div class="ost-bar" id="ost-bar"><div class="ost-bar-fill" id="ost-bar-fill"></div></div>
+    <span class="ost-time" id="ost-time">0:00 / 0:00</span>
+  </div>
+  <div class="ost-controls">
+    <button class="ost-btn" id="ost-prev">⏮</button>
+    <button class="ost-btn" id="ost-playpause">▶</button>
+    <button class="ost-btn" id="ost-stop">⏹</button>
+    <button class="ost-btn" id="ost-next">⏭</button>
+    <span class="ost-vol-label">VOL</span>
+    <input type="range" id="ost-vol" class="ost-vol-range" min="0" max="100" value="100">
+  </div>
+</div>
+<script src="ost-player.js"></script>
 </body>
 </html>
