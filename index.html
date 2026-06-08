@@ -163,6 +163,21 @@
   }
   .ost-btn:hover { color:var(--red); }
   .ost-btn.active { color:#ff2020; }
+  .ost-volume { display:flex; align-items:center; gap:6px; }
+  .ost-vol-label { font-size:8px; letter-spacing:1px; color:rgba(255,255,255,0.3); flex-shrink:0; }
+  .ost-vol-range {
+    flex:1; -webkit-appearance:none; appearance:none;
+    height:3px; background:rgba(255,255,255,0.1); border-radius:2px; cursor:pointer; outline:none;
+  }
+  .ost-vol-range::-webkit-slider-thumb {
+    -webkit-appearance:none; width:9px; height:9px;
+    border-radius:50%; background:#cc0000; cursor:pointer;
+    box-shadow:0 0 4px rgba(204,0,0,0.6);
+  }
+  .ost-vol-range::-moz-range-thumb {
+    width:9px; height:9px; border:none;
+    border-radius:50%; background:#cc0000; cursor:pointer;
+  }
   @media(max-width:480px) { .ost-player { width:160px; } }
 
   @media(max-width:768px) {
@@ -325,6 +340,10 @@
     <button class="ost-btn" id="ost-playpause" title="Play / Pause">▶</button>
     <button class="ost-btn" id="ost-stop" title="Stop">■</button>
     <button class="ost-btn" id="ost-next" title="Siguiente">⏭</button>
+  </div>
+  <div class="ost-volume">
+    <span class="ost-vol-label">VOL</span>
+    <input type="range" id="ost-vol" class="ost-vol-range" min="0" max="100" value="100">
   </div>
 </div>
 
@@ -589,10 +608,14 @@ init();
 (function(){
   'use strict';
 
-  // ── PLAYLIST — agregar tracks cuando estén listos ──
   const PLAYLIST = [
-    // { title: 'Nombre del track', src: 'ost/track1.ogg' },
-    // { title: 'Nombre del track 2', src: 'ost/track2.ogg' },
+    { title: 'Break Stuff — Slipknot',            src: 'playlist/Break Stuff - Slipknot.webm' },
+    { title: 'Down with the Sickness — Disturbed', src: 'playlist/Down with the Sickness - Disturbed.webm' },
+    { title: 'Duality — Slipknot',                 src: 'playlist/Duality - Slipknot.webm' },
+    { title: 'Faint — Linkin Park',                src: 'playlist/Faint - Linkin Park.webm' },
+    { title: 'In the End — Linkin Park',            src: 'playlist/In the End - Linkin Park.webm' },
+    { title: 'One Step Closer — Linkin Park',       src: 'playlist/One Step Closer - Linkin Park.webm' },
+    { title: 'The Instinct — Killer Instinct',      src: 'playlist/The Instinct - Killer Instinct.webm' },
   ];
 
   const player = document.getElementById('ost-player');
@@ -615,6 +638,7 @@ init();
 
   const audio=new Audio();
   audio.preload='metadata';
+  const MAX_VOL=0.25; // 100% del fader = 25% volumen real
   let idx=0, playing=false;
 
   function fmt(s){ const m=Math.floor(s/60),sec=Math.floor(s%60); return `${m}:${String(sec).padStart(2,'0')}`; }
@@ -643,8 +667,11 @@ init();
   }
 
   // Restaurar estado de página anterior
-  let savedTime=0;
-  try{ const s=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); if(typeof s.idx==='number') idx=s.idx; savedTime=s.time||0; }catch{}
+  let savedTime=0, savedVol=100;
+  try{ const s=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); if(typeof s.idx==='number') idx=s.idx; savedTime=s.time||0; if(typeof s.vol==='number') savedVol=s.vol; }catch{}
+  audio.volume=Math.max(0,Math.min(1,(savedVol/100)*MAX_VOL));
+  const volSlider=document.getElementById('ost-vol');
+  volSlider.value=savedVol;
   loadTrack(idx, savedTime);
 
   // Intentar retomar reproducción si venía sonando
@@ -679,8 +706,12 @@ init();
   audio.addEventListener('timeupdate', updateBar);
   audio.addEventListener('ended',()=>{ loadTrack(idx+1,0); audio.play().catch(()=>{}); });
 
+  volSlider.addEventListener('input',()=>{
+    audio.volume=Math.max(0,Math.min(1,(volSlider.value/100)*MAX_VOL));
+  });
+
   window.addEventListener('beforeunload',()=>{
-    try{ localStorage.setItem(LS_KEY,JSON.stringify({idx,time:audio.currentTime,playing})); }catch{}
+    try{ localStorage.setItem(LS_KEY,JSON.stringify({idx,time:audio.currentTime,playing,vol:parseInt(volSlider.value)})); }catch{}
   });
 })();
 </script>
