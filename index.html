@@ -338,7 +338,7 @@ function initCountdown(data){
   all.sort((a,b)=>new Date(a.date)-new Date(b.date));
   const next=all.find(m=>new Date(m.date)>now&&!m.finished);
   const flyer=document.getElementById('combat-flyer');
-  if(!next){ if(flyer) flyer.src='flyerundefined.html'; return; }
+  if(!next){ if(flyer) flyer.src=(data.gran_final?.winner||data.gran_final?.finished)?'flyerchampion.html':'flyerundefined.html'; return; }
   if(flyer) flyer.src = (next.isDM && next.round==='DM Eliminación') ? 'flyerdm.html' : next.round==='Gran Final' ? 'flyerfinal.html' : 'flyer1v1.html';
   startCountdown(next.date);
   if(next.isDM){
