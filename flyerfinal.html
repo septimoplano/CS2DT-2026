@@ -277,57 +277,6 @@ canvas {
   50%, 100% { opacity: 0; }
 }
 
-/* ── CSS Fire ── */
-.fire-wrap {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 160px;
-  z-index: 6;
-  pointer-events: none;
-}
-.fire-overlay {
-  position: absolute;
-  inset: -999px;
-  backdrop-filter: blur(7px) brightness(10);
-  pointer-events: none;
-}
-.fire-blur {
-  position: absolute;
-  inset: -999px;
-  z-index: 1;
-  pointer-events: none;
-}
-.fire-line {
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(var(--p));
-  mask: linear-gradient(0deg, #000 var(--s), #0000 var(--e));
-}
-.fire-ball {
-  position: absolute;
-  bottom: 0;
-  --a: 32.02135;
-  --w: 26px;
-  --m: 9px;
-  --b: mod(var(--n) * var(--a), 1);
-  left: calc((100% - var(--w)) * var(--b));
-  width: var(--w);
-  height: var(--w);
-  background: radial-gradient(closest-side, #fff, #f80, #f50, #f00, #f300);
-  border-radius: 0% 100%;
-  translate: calc(-1 * var(--m)) 0;
-  animation:
-    fire-wee 2s calc(var(--n) * -2s) infinite linear,
-    fire-bf  1.756s calc(mod(var(--n) * 6, 1) * -1.232s) ease-in-out infinite;
-}
-@keyframes fire-wee {
-  from { scale: 0; opacity: 0; }
-  5%   { opacity: 1; }
-  15%  { scale: 1; }
-  to   { left: calc(50% - var(--w) * .5 + 25% * (var(--b) * 2 - 1)); bottom: calc(100% - 24px); scale: 0; }
-}
-@keyframes fire-bf { 50% { translate: var(--m) 0; } }
-
 /* ── Player avatars ── */
 .player-avatar {
   position: absolute;
@@ -358,16 +307,6 @@ canvas {
   <div class="streaks"></div>
   <div class="vignette"></div>
   <div class="scanlines"></div>
-
-  <div class="fire-wrap" id="fire-wrap">
-    <div class="fire-overlay"></div>
-    <div class="fire-blur">
-      <div class="fire-line" style="--p:2px;--s:0%;--e:22%"></div>
-      <div class="fire-line" style="--p:5px;--s:15%;--e:45%"></div>
-      <div class="fire-line" style="--p:10px;--s:38%;--e:72%"></div>
-      <div class="fire-line" style="--p:18px;--s:60%;--e:100%"></div>
-    </div>
-  </div>
 
   <div class="corner tl"></div>
   <div class="corner tr"></div>
@@ -518,15 +457,6 @@ canvas {
   }
 
   for (let i = 0; i < EMBER_N; i++) embers.push(new Ember(true));
-
-  // ── CSS fire balls ──
-  const fireWrap = document.getElementById('fire-wrap');
-  for (let i = 1; i <= 42; i++) {
-    const b = document.createElement('div');
-    b.className = 'fire-ball';
-    b.style.setProperty('--n', i);
-    fireWrap.appendChild(b);
-  }
 
   let lgFade   = 0;
   let nextBolt = 750;
